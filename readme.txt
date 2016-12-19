@@ -9,7 +9,7 @@ It takes commands from users messages starting with '!r'
 
 Call it by typing: 
 
-   '!r n' 
+   !r n
 
 where n is the number of 10 sided dice to be rolled.
 A dice explodes (gets rolled again) if its result is
