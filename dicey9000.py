@@ -6,7 +6,7 @@ import random
 from datetime import datetime
 
 import dice
-import dicey9000_login_info.py as info
+import dicey9000_login_info as info
 from auxiliar_functions import sp_print
 
 def main():
