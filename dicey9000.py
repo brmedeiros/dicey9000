@@ -46,7 +46,7 @@ def main():
         if message.content.startswith('!r'):
             try:
                 will_roll = True
-                number_of_dice, dice_type, explode, success = dice.dice_test(message.content)
+                number_of_dice, dice_type, explode, success = dice.dice_input_verification(message.content)
             except dice.SuccessConditionError as ex:
                 exception_msg_string, will_roll = dice.dice_exception_msg(ex, ex.msg)
                 yield from client.send_message(message.channel, exception_msg_string)

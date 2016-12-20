@@ -28,7 +28,7 @@ class ExplodingDiceTooSmallError(Exception):
         self.msg = 'Exploding value should be greater than 2'
 
 
-def dice_test(input_command):
+def dice_input_verification(input_command):
     
     match1 = re.match('!r (\d+)$', input_command)
     match2 = re.match('!r (\d+)d(\d+)$', input_command)
@@ -153,7 +153,7 @@ def dice_roll(number_of_dice, dice_type = 10, explode = 0, success_condition = 0
 
 def dice_exception_msg(exception, exception_message):
     '''
-    ptints the exception message and returns False
+    prints the exception message and returns False
     (later used to decide if the roll will be made)
     '''
     s1 = 'An exception of type {0} occurred.'.format(type(exception).__name__)
@@ -163,14 +163,18 @@ def dice_exception_msg(exception, exception_message):
     print(msg_string)
     return msg_string, False
 
-def dice_to_roll_or_not(*args):
-    pass
-
+def should_it_roll(input_command, exception_list):
+    '''
+    Makes a dice roll if no dice exception occurs
+    If an exception happens, the exception message
+    is printed to the user
+    '''
+    
 def main():
     input_command = input('Type the roll you want to make...\n')
     try:
         will_roll = True
-        n, d, x, s = dice_test(input_command)
+        n, d, x, s = dice_input_verification(input_command)
     except SuccessConditionError as ex:
         exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
     except ExplodingDiceError as ex:
@@ -180,6 +184,7 @@ def main():
     except RollInputError as ex:
         exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
 
+    
     if will_roll == True: 
         res, formated_results, r_msg = dice_roll(n, d, x, s)
         results_string = ' '.join(formated_results)
