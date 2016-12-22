@@ -10,7 +10,7 @@ class RollInputError(Exception):
     raised if the input syntax is wrong, tells the use how it should be done
     '''
     def __init__(self):
-        self.msg = 'Syntax: !r n or !r ndm or !r ndm?p or !r ndmxp or !r ndmxp?q\n        where n, m, p and q are integers greater than zero...'
+        self.msg = 'Syntax:\n!r n or !r ndm or !r ndm?p or !r ndmxp or !r ndmxp?q\nwhere n, m, p and q are integers greater than zero...'
     
 class SuccessConditionError(Exception):
     '''raised if the success condition is greater than the dice size'''
@@ -28,23 +28,27 @@ class ExplodingDiceTooSmallError(Exception):
         self.msg = 'Exploding value should be greater than 2'
 
 
-def dice_input_verification(input_command):
+def dice_input_verification(input_command, default_mode = 'wod'):
     
+    # match01 = re.match('!r set wod$', input_command)
+    # match02 = re.match('!r set simple$', input_command)
     match1 = re.match('!r (\d+)$', input_command)
     match2 = re.match('!r (\d+)d(\d+)$', input_command)
     match22 = re.match('!r (\d+)d(\d+)\?(\d+)$', input_command)      
     match3 = re.match('!r (\d+)d(\d+)x(\d+)$', input_command)
     match32 = re.match('!r (\d+)d(\d+)x(\d+)\?(\d+)$', input_command)
 
-    # match1 = re.match('(\d+)$', input_command)
-    # match2 = re.match('(\d+)d(\d+)$', input_command)  
-    # match22 = re.match('(\d+)d(\d+)\?(\d+)$', input_command)      
-    # match3 = re.match('(\d+)d(\d+)x(\d+)$', input_command)
-    # match32 = re.match('(\d+)d(\d+)x(\d+)\?(\d+)$', input_command)
-
+    # if match01 !=None:
+    #     default_mode = 'wod'
+    #     msg = 'Default mode (!r n) set to World of Darksness (WoD)')
+    #     print('------')
+    #     return 0, 0, 0, 0
     
-    if match1 !=None:
+    if match1 !=None and default_mode == 'wod':
         return int(match1.group(1)), 10, 10, 7
+
+    # elif match1 !=None and default_mode == 'simple':
+    #     return int(match1.group(1)), 6, 0, 0
     
     elif match2 != None:
         return int(match2.group(1)), int(match2.group(2)), 0, 0
@@ -169,6 +173,7 @@ def should_it_roll(input_command, exception_list):
     If an exception happens, the exception message
     is printed to the user
     '''
+    pass
     
 def main():
     input_command = input('Type the roll you want to make...\n')
