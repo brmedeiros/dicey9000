@@ -44,19 +44,17 @@ def dice_input_verification(input_command, default_mode = 'wod'):
     match32 = re.match('!r (\d+)d(\d+)x(\d+)\?(\d+)$', input_command)
 
     if match01 !=None:
-        mode_message = 'Default mode (!r n) set to World of Darksness (WoD)\n------'
+        mode_message = 'Default mode (!r n) set to World of Darksness (WoD)'
         return 0, 0, 0, 0, 'wod', mode_message
 
     elif match02 !=None:
-        mode_message = 'Default mode (!r n) set to simple\n------'
+        mode_message = 'Default mode (!r n) set to simple'
         return 0, 0, 0, 0, 'simple', mode_message
     
     elif match1 !=None and default_mode == 'wod':
-        print('ok')
         return int(match1.group(1)), 10, 10, 7, 'wod', None
 
     elif match1 !=None and default_mode == 'simple':
-        print('ok')
         return int(match1.group(1)), 6, 0, 0, 'simple', None
     
     elif match2 != None:

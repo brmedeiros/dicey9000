@@ -7,7 +7,7 @@ from datetime import datetime
 
 import dice
 import dicey9000_login_info as info
-from auxiliar_functions import sp_print
+import auxiliar_functions as auxf
 
 def main():
 
@@ -24,15 +24,14 @@ def main():
         it should not be called anywhere
         it is defined in the discord module
         '''
-        print('------')
-        print('Logged in as {}, id: {}'.format(client.user, client.user.id))
-        sp_print('Server(s) joined:')
+        print('DICEY9000 v.1.1\n------\nLogged in as {0}, id: {1}'.format(client.user, client.user.id))
+        auxf.sp_print('Server(s) joined:')
         for server in client.servers:
-            sp_print('{}'.format(server))
-        print()
-        print('------')
+            auxf.sp_print('{0}'.format(server))
+        print('\n------')
+        
         global default_mode
-        default_mode = 'wod' #starts dicey9000 with WoD default mode
+        default_mode = 'wod'
 
 
     @client.async_event    
@@ -42,17 +41,20 @@ def main():
         it should not be called anywhere
         it is defined in the discord module
         '''
-        # print messages written in the channels (from all servers?) to the terminal screen 
-        print('{:%d/%m/%y %H:%M} @{} {}: {}'.format(datetime.now(), message.channel, message.author.name, message.content))
+        # print messages written in the channels to the terminal screen 
+        print('{:%d/%m/%y %H:%M} @{} {}: {}'
+              .format(datetime.now(), message.channel, message.author.name, message.content))
         
         if message.content.startswith('!r'):
             global default_mode
             try:
-                will_roll = True
-                number_of_dice, dice_type, explode, success, mode, mode_msg = dice.dice_input_verification(message.content, default_mode)
+                number_of_dice, dice_type, explode, success, mode, mode_msg = dice.dice_input_verification(message.content,
+                                                                                                           default_mode)
                 if mode_msg != None:
                     yield from client.send_message(message.channel, mode_msg)
                     default_mode = mode
+                    will_roll = False
+                else: will_roll = True
             except dice.SuccessConditionError as ex:
                 exception_msg_string, will_roll = dice.dice_exception_msg(ex, ex.msg)
                 yield from client.send_message(message.channel, exception_msg_string)
