@@ -1,20 +1,41 @@
 DICEY9000
 
-v1.0
+v1.1
 
 dicey9000 is a bot for discord that makes dice rolls.
 It takes commands from users messages starting with '!r'
 
----Default mode - World of Darkness (WoD)
+---Default mode
 
-Call it by typing: 
+Activate the default roll mode by typing
 
    !r n
 
-where n is the number of 10 sided dice to be rolled.
+where n is the number of dices to be rolled.
+
+
+---Choose default mode
+
+You can choose the default roll mode by typing
+
+   !r set 'mode name'
+
+There are currently two possible choices:
+
+* wod
+
+World of Darkness (WoD) (chosen by default)
+
+Uses the WoD to count successes and explode dices.
+A successes happens if the dice scores 7 of higher.
 A dice explodes (gets rolled again) if its result is
 equal to 10. A result list is printed and the number 
-f success is shown.
+of successes is shown.
+
+* simple
+
+Rolls n 6 sided dices and a list of the results are shown.
+
 
 ---Arbitrary roll 
 
