@@ -4,6 +4,7 @@ import random
 import re
 import sys
 from auxiliar_functions import sp_print
+# import pdb
 
 class RollInputError(Exception):
     '''
@@ -29,64 +30,71 @@ class ExplodingDiceTooSmallError(Exception):
 
 
 def dice_input_verification(input_command, default_mode = 'wod'):
-    
-    # match01 = re.match('!r set wod$', input_command)
-    # match02 = re.match('!r set simple$', input_command)
+    '''
+    checks the input command, matches 01 and 02 set the default roll mode (!r n)
+    match1 is the default roll mode
+    matches 2, 22, 3 and 32 are the optional roll modes
+    '''
+    match01 = re.match('!r set wod$', input_command)
+    match02 = re.match('!r set simple$', input_command)
     match1 = re.match('!r (\d+)$', input_command)
     match2 = re.match('!r (\d+)d(\d+)$', input_command)
     match22 = re.match('!r (\d+)d(\d+)\?(\d+)$', input_command)      
     match3 = re.match('!r (\d+)d(\d+)x(\d+)$', input_command)
     match32 = re.match('!r (\d+)d(\d+)x(\d+)\?(\d+)$', input_command)
 
-    # if match01 !=None:
-    #     default_mode = 'wod'
-    #     msg = 'Default mode (!r n) set to World of Darksness (WoD)')
-    #     print('------')
-    #     return 0, 0, 0, 0
-    
-    if match1 !=None and default_mode == 'wod':
-        return int(match1.group(1)), 10, 10, 7
+    if match01 !=None:
+        mode_message = 'Default mode (!r n) set to World of Darksness (WoD)\n------'
+        return 0, 0, 0, 0, 'wod', mode_message
 
-    # elif match1 !=None and default_mode == 'simple':
-    #     return int(match1.group(1)), 6, 0, 0
+    elif match02 !=None:
+        mode_message = 'Default mode (!r n) set to simple\n------'
+        return 0, 0, 0, 0, 'simple', mode_message
+    
+    elif match1 !=None and default_mode == 'wod':
+        print('ok')
+        return int(match1.group(1)), 10, 10, 7, 'wod', None
+
+    elif match1 !=None and default_mode == 'simple':
+        print('ok')
+        return int(match1.group(1)), 6, 0, 0, 'simple', None
     
     elif match2 != None:
-        return int(match2.group(1)), int(match2.group(2)), 0, 0
+        return int(match2.group(1)), int(match2.group(2)), 0, 0, None, None
 
     elif match22 != None:
         if int(match22.group(3)) > int(match22.group(2)):
             raise SuccessConditionError
-            return 0, 0, 0, 0
+            return 0, 0, 0, 0, None, None
         else: 
-            return int(match22.group(1)), int(match22.group(2)), 0, int(match22.group(3)) 
+            return int(match22.group(1)), int(match22.group(2)), 0, int(match22.group(3)), None, None
     
     elif match3 != None:
         if int(match3.group(3)) > int(match3.group(2)):
             raise ExplodingDiceError
-            return 0, 0, 0, 0
+            return 0, 0, 0, 0, None, None
         elif int(match3.group(3)) < 3:
             raise ExplodingDiceTooSmallError
-            return 0, 0, 0, 0
+            return 0, 0, 0, 0, None, None
         else:
-            return int(match3.group(1)), int(match3.group(2)), int(match3.group(3)), 0
-        
-        
+            return int(match3.group(1)), int(match3.group(2)), int(match3.group(3)), 0, None, None
+                
     elif match32 != None:
         if int(match32.group(3)) > int(match32.group(2)):
             raise ExplodingDiceError
-            return 0, 0, 0, 0
+            return 0, 0, 0, 0, None, None
         elif int(match32.group(3)) < 3:
             raise ExplodingDiceTooSmallError
-            return 0, 0, 0, 0
+            return 0, 0, 0, 0, None, None
         elif int(match32.group(4)) > int(match32.group(2)):
             raise SuccessConditionError
-            return 0, 0, 0, 0
+            return 0, 0, 0, 0, None, None
         else:
-            return int(match32.group(1)), int(match32.group(2)), int(match32.group(3)), int(match32.group(4))
+            return int(match32.group(1)), int(match32.group(2)), int(match32.group(3)), int(match32.group(4)), None, None
         
     else:
         raise RollInputError
-        return 0, 0, 0, 0
+        return 0, 0, 0, 0, None, None
        
 
 def results_recorder(results_list, single_result, formated_results, format_option = False):
@@ -113,6 +121,7 @@ def exploding_dice_check(explode_value, dice_type, results_list, single_result, 
             # sp_print('x.{}'.format(single_result))
             results_recorder(results_list, single_result, formated_results, 1)
 
+
 def count_resuts_success(results_list, success_condition):
     '''
     counts the number of successes and inform the user if the success condition is > 0
@@ -122,15 +131,13 @@ def count_resuts_success(results_list, success_condition):
         for single_result in results_list:
             if single_result >= success_condition:
                 success_counter += 1
+        
         if success_counter == 0:
             success_msg = 'Failure...'
-            #print(success_msg)
         elif success_counter == 1:
             success_msg = '1 success!'
-            #print(success_msg)
         elif success_counter > 1:
             success_msg = '{} successes!'.format(success_counter)
-            #print(success_msg)
         return success_msg
             
 
@@ -164,8 +171,8 @@ def dice_exception_msg(exception, exception_message):
     s2 = '------\n{0}\n------'.format(exception_message)
     s3 = 'Try again!'
     msg_string = '\n'.join([s1, s2, s3])
-    print(msg_string)
     return msg_string, False
+
 
 def should_it_roll(input_command, exception_list):
     '''
@@ -174,12 +181,15 @@ def should_it_roll(input_command, exception_list):
     is printed to the user
     '''
     pass
+
     
 def main():
-    input_command = input('Type the roll you want to make...\n')
     try:
         will_roll = True
-        n, d, x, s = dice_input_verification(input_command)
+        n, d, x, s, mode, mode_msg= dice_input_verification(input('Type the roll you want to make...\n'))
+        while mode_msg != None:
+            print(mode_msg)
+            n, d, x, s, mode, mode_msg = dice_input_verification(input('Ready...\n'), mode)
     except SuccessConditionError as ex:
         exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
     except ExplodingDiceError as ex:

@@ -31,6 +31,8 @@ def main():
             sp_print('{}'.format(server))
         print()
         print('------')
+        global default_mode
+        default_mode = 'wod' #starts dicey9000 with WoD default mode
 
 
     @client.async_event    
@@ -44,9 +46,13 @@ def main():
         print('{:%d/%m/%y %H:%M} @{} {}: {}'.format(datetime.now(), message.channel, message.author.name, message.content))
         
         if message.content.startswith('!r'):
+            global default_mode
             try:
                 will_roll = True
-                number_of_dice, dice_type, explode, success = dice.dice_input_verification(message.content)
+                number_of_dice, dice_type, explode, success, mode, mode_msg = dice.dice_input_verification(message.content, default_mode)
+                if mode_msg != None:
+                    yield from client.send_message(message.channel, mode_msg)
+                    default_mode = mode
             except dice.SuccessConditionError as ex:
                 exception_msg_string, will_roll = dice.dice_exception_msg(ex, ex.msg)
                 yield from client.send_message(message.channel, exception_msg_string)
@@ -68,7 +74,7 @@ def main():
                 if success_msg != None:
                     yield from client.send_message(message.channel, success_msg)
 
-
+    
     client.run(info.token)
 
 if __name__ == '__main__':
