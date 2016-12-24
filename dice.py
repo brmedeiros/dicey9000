@@ -3,7 +3,7 @@
 import random
 import re
 import sys
-from auxiliar_functions import sp_print
+import auxiliar_functions as auxf
 # import pdb
 
 class RollInputError(Exception):
@@ -11,8 +11,9 @@ class RollInputError(Exception):
     raised if the input syntax is wrong, tells the use how it should be done
     '''
     def __init__(self):
-        self.msg = 'Syntax:\n!r n or !r ndm or !r ndm?p or !r ndmxp or !r ndmxp?q\nwhere n, m, p and q are integers greater than zero...'
-    
+        self.msg = 'Syntax:\n!r n or !r ndm or !r ndm?p or !r ndmxp or !r ndmxp?q\n'\
+                   'where n, m, p and q are integers greater than zero...'
+
 class SuccessConditionError(Exception):
     '''raised if the success condition is greater than the dice size'''
     def __init__(self):
@@ -116,7 +117,7 @@ def exploding_dice_check(explode_value, dice_type, results_list, single_result, 
     if explode_value > 0:
         while single_result >= explode_value:
             single_result = random.randint(1,dice_type)
-            # sp_print('x.{}'.format(single_result))
+            # auxf.sp_print('x.{}'.format(single_result))
             results_recorder(results_list, single_result, formated_results, 1)
 
 
@@ -149,8 +150,8 @@ def dice_roll(number_of_dice, dice_type = 10, explode = 0, success_condition = 0
     formated_results = []
     for i in range(number_of_dice):
         result = random.randint(1,dice_type)
-        # sp_print('{0:2}.'.format(i+1), result) # for printing in a 2-ish column table
-        # sp_print(result) # for printing in a single line
+        # auxf.sp_print('{0:2}.'.format(i+1), result) # for printing in a 2-ish column table
+        # auxf.sp_print(result) # for printing in a single line
         results_recorder(results, result, formated_results)
         exploding_dice_check(explode, dice_type, results, result, formated_results)
         # print() # for printing in a 2-ish column table
@@ -196,7 +197,7 @@ def main():
         exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
     except RollInputError as ex:
         exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
-
+    
     
     if will_roll == True: 
         res, formated_results, r_msg = dice_roll(n, d, x, s)
