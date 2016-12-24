@@ -48,13 +48,13 @@ def main():
         if message.content.startswith('!r'):
             global default_mode
             try:
+                will_roll = True
                 number_of_dice, dice_type, explode, success, mode, mode_msg = dice.dice_input_verification(message.content,
                                                                                                            default_mode)
                 if mode_msg != None:
                     yield from client.send_message(message.channel, mode_msg)
                     default_mode = mode
                     will_roll = False
-                else: will_roll = True
             except dice.SuccessConditionError as ex:
                 exception_msg_string, will_roll = dice.dice_exception_msg(ex, ex.msg)
                 yield from client.send_message(message.channel, exception_msg_string)

@@ -181,7 +181,7 @@ def should_it_roll(input_command, exception_list):
     '''
     pass
 
-    
+
 def main():
     try:
         will_roll = True
