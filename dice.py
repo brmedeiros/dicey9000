@@ -191,12 +191,16 @@ def main():
             n, d, x, s, mode, mode_msg = dice_input_verification(input('Ready...\n'), mode)
     except SuccessConditionError as ex:
         exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
+        print(exception_msg_string)        
     except ExplodingDiceError as ex:
         exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
+        print(exception_msg_string)
     except ExplodingDiceTooSmallError as ex:
         exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
+        print(exception_msg_string)
     except RollInputError as ex:
         exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
+        print(exception_msg_string)
     
     
     if will_roll == True: 
