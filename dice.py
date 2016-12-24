@@ -49,7 +49,7 @@ def dice_input_verification(input_command, default_mode = 'wod'):
         return 0, 0, 0, 0, 'wod', mode_message
 
     elif match02 !=None:
-        mode_message = 'Default mode (!r n) set to simple'
+        mode_message = 'Default mode (!r n) set to simple (nd6)'
         return 0, 0, 0, 0, 'simple', mode_message
     
     elif match1 !=None and default_mode == 'wod':
