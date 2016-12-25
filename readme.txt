@@ -49,4 +49,3 @@ An arbitrary roll can be made with the following syntax:
 - If the dice result is equal or greater than the success_condition a
   success is added to the total number of successes.
 - Both x(explode_value) and ?(success_condition) are optional.
-
