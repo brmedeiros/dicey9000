@@ -186,23 +186,16 @@ def main():
     try:
         will_roll = True
         n, d, x, s, mode, mode_msg= dice_input_verification(input('Type the roll you want to make...\n'))
+        
         while mode_msg != None:
             print(mode_msg)
             n, d, x, s, mode, mode_msg = dice_input_verification(input('Ready...\n'), mode)
-    except SuccessConditionError as ex:
+
+    except (SuccessConditionError, ExplodingDiceError, ExplodingDiceTooSmallError, RollInputError) as ex:
         exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
         print(exception_msg_string)        
-    except ExplodingDiceError as ex:
-        exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
-        print(exception_msg_string)
-    except ExplodingDiceTooSmallError as ex:
-        exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
-        print(exception_msg_string)
-    except RollInputError as ex:
-        exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
-        print(exception_msg_string)
-    
-    
+
+
     if will_roll == True: 
         res, formated_results, r_msg = dice_roll(n, d, x, s)
         results_string = ' '.join(formated_results)
