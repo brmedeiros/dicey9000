@@ -52,16 +52,9 @@ def main():
                     yield from client.send_message(message.channel, mode_msg)
                     default_mode = mode
                     will_roll = False
-            except dice.SuccessConditionError as ex:
-                exception_msg_string, will_roll = dice.dice_exception_msg(ex, ex.msg)
-                yield from client.send_message(message.channel, exception_msg_string)
-            except dice.ExplodingDiceError as ex:
-                exception_msg_string, will_roll = dice.dice_exception_msg(ex, ex.msg)
-                yield from client.send_message(message.channel, exception_msg_string)
-            except dice.ExplodingDiceTooSmallError as ex:
-                exception_msg_string, will_roll = dice.dice_exception_msg(ex, ex.msg)
-                yield from client.send_message(message.channel, exception_msg_string)
-            except dice.RollInputError as ex:
+
+            except (dice.SuccessConditionError, dice.ExplodingDiceError,
+                    dice.ExplodingDiceTooSmallError, dice.RollInputError) as ex:
                 exception_msg_string, will_roll = dice.dice_exception_msg(ex, ex.msg)
                 yield from client.send_message(message.channel, exception_msg_string)
 
