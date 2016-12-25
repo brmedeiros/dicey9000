@@ -7,9 +7,7 @@ import auxiliar_functions as auxf
 # import pdb
 
 class RollInputError(Exception):
-    '''
-    raised if the input syntax is wrong, tells the use how it should be done
-    '''
+    '''    raised if the input syntax is wrong, tells the use how it should be done'''
     def __init__(self):
         self.msg = 'Syntax:\n!r n or !r ndm or !r ndm?p or !r ndmxp or !r ndmxp?q\n'\
                    'where n, m, p and q are integers greater than zero...'
@@ -34,7 +32,7 @@ def dice_input_verification(input_command, default_mode = 'wod'):
     '''
     checks the input command, matches 01 and 02 set the default roll mode (!r n)
     match1 is the default roll mode
-    matches 2, 22, 3 and 32 are the optional roll modes
+    matches 2, 22, 3 and 32 are the arbitrary roll modes
     '''
     match01 = re.match('!r set wod$', input_command)
     match02 = re.match('!r set simple$', input_command)
@@ -111,8 +109,8 @@ def results_recorder(results_list, single_result, formated_results, format_optio
 
 def exploding_dice_check(explode_value, dice_type, results_list, single_result, formated_results):
     '''
-    checks if there a value for exploding dice
-    if so the dice is rerolled if the it's result exceed the explode value
+    checks if there is an exploding dice condition
+    if so the dice is rerolled if its result exceeds the explode value
     '''
     if explode_value > 0:
         while single_result >= explode_value:
@@ -123,7 +121,7 @@ def exploding_dice_check(explode_value, dice_type, results_list, single_result, 
 
 def count_resuts_success(results_list, success_condition):
     '''
-    counts the number of successes and inform the user if the success condition is > 0
+    counts the number of successes and informs the user about it
     '''
     if success_condition > 0:
         success_counter = 0
@@ -163,7 +161,7 @@ def dice_roll(number_of_dice, dice_type = 10, explode = 0, success_condition = 0
 
 def dice_exception_msg(exception, exception_message):
     '''
-    prints the exception message and returns False
+    returns the exception message and returns False
     (later used to decide if the roll will be made)
     '''
     s1 = 'An exception of type {0} occurred.'.format(type(exception).__name__)
@@ -173,7 +171,7 @@ def dice_exception_msg(exception, exception_message):
     return msg_string, False
 
 
-def should_it_roll(input_command, exception_list):
+def should_it_roll(input_command, exception_tuple):
     '''
     Makes a dice roll if no dice exception occurs
     If an exception happens, the exception message
