@@ -13,10 +13,7 @@ def main():
 
     client = discord.Client()
     
-    @client.async_event
-    def on_error():
-        pass
-    
+        
     @client.async_event # equivalent to @client.event \n @asyncio.courotine
     def on_ready():
         '''
