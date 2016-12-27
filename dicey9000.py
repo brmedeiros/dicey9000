@@ -3,7 +3,7 @@
 import discord
 import asyncio
 import random
-from datetime import datetime
+import datetime as dt
 
 import dice
 import dicey9000_login_info as info
@@ -40,38 +40,36 @@ def main():
         '''
         # print messages written in the channels to the terminal screen 
         print('{:%d/%m/%y %H:%M} @{} {}: {}'
-              .format(datetime.now(), message.channel, message.author.name, message.content))
+              .format(dt.datetime.now(), message.channel, message.author.name, message.content))
 
         
         if message.content.startswith('!r'):
-            
-            if message.content.startswith('!r help'):
-                yield from client.send_message(message.channel,
-                                               'Find the documentation at:\n'\
-                                               'https://github.com/brmedeiros/dicey9000/blob/master/README.md')    
-            else:
-                global default_mode
-                try:
-                    will_roll = True
-                    number_of_dice, dice_type, explode, success, mode, mode_msg = dice.dice_input_verification(message.content,
-                                                                                                               default_mode)
-                    if mode_msg != None:
-                        yield from client.send_message(message.channel, mode_msg)
-                        default_mode = mode
-                        will_roll = False
+            global default_mode
+            try:
+                will_roll = True
+                number_of_dice, dice_type, explode, success, mode, mode_msg, aux_msg = dice.dice_input_verification(message.content, default_mode)
 
-                except (dice.SuccessConditionError, dice.ExplodingDiceError,
-                        dice.ExplodingDiceTooSmallError, dice.RollInputError) as ex:
-                    exception_msg_string, will_roll = dice.dice_exception_msg(ex, ex.msg)
-                    yield from client.send_message(message.channel, exception_msg_string)
+                if mode_msg != None:
+                    yield from client.send_message(message.channel, mode_msg)
+                    default_mode = mode
+                    will_roll = False
+                
+                if aux_msg != None:
+                    yield from client.send_message(message.channel, aux_msg)
+                    will_roll = False
+
+            except (dice.SuccessConditionError, dice.ExplodingDiceError,
+                    dice.ExplodingDiceTooSmallError, dice.RollInputError) as ex:
+                exception_msg_string, will_roll = dice.dice_exception_msg(ex, ex.msg)
+                yield from client.send_message(message.channel, exception_msg_string)
 
 
-                if will_roll == True: 
-                    results, formated_results, success_msg  = dice.dice_roll(number_of_dice, dice_type, explode, success)
-                    results_string = '  '.join(formated_results)
-                    yield from client.send_message(message.channel, results_string)
-                    if success_msg != None:
-                        yield from client.send_message(message.channel, success_msg)
+            if will_roll == True: 
+                results, formated_results, success_msg  = dice.dice_roll(number_of_dice, dice_type, explode, success)
+                results_string = '  '.join(formated_results)
+                yield from client.send_message(message.channel, results_string)
+                if success_msg != None:
+                    yield from client.send_message(message.channel, success_msg)
 
     
     client.run(info.token)
