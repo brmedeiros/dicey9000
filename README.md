@@ -1,6 +1,6 @@
 # dicey9000
 
-*v1.1*
+*v1.2*
 
 dicey9000 is a bot for discord that makes dice rolls.
 It takes commands from users messages starting with `!r`
@@ -46,3 +46,9 @@ An arbitrary roll can be made with the following syntax:
   * If the dice result is equal or greater than the success_condition a
     success is added to the total number of successes.
   * Both x(explode_value) and ?(success_condition) are optional.
+
+#### Help
+
+Get the link to this page by typing
+
+   `!r help`

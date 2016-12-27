@@ -21,7 +21,7 @@ def main():
         it should not be called anywhere
         it is defined in the discord module
         '''
-        print('DICEY9000 v.1.1\n------\nLogged in as {0}, id: {1}'.format(client.user, client.user.id))
+        print('DICEY9000 v.1.2\n------\nLogged in as {0}, id: {1}'.format(client.user, client.user.id))
         auxf.sp_print('Server(s) joined:')
         for server in client.servers:
             auxf.sp_print('{0}'.format(server))
@@ -47,7 +47,8 @@ def main():
             global default_mode
             try:
                 will_roll = True
-                number_of_dice, dice_type, explode, success, mode, mode_msg, aux_msg = dice.dice_input_verification(message.content, default_mode)
+                number_of_dice, dice_type, explode, success, mode, mode_msg, aux_msg\
+                = dice.dice_input_verification(message.content, default_mode)
 
                 if mode_msg != None:
                     yield from client.send_message(message.channel, mode_msg)
