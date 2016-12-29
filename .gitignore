@@ -4,6 +4,10 @@ dicey9000.txt
 login_token
 commit-messages.txt
 
+### Heroku stuff
+
+.env
+
 ### Python stuff
 
 # Byte-compiled / optimized / DLL files
