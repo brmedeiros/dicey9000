@@ -38,13 +38,22 @@ def main():
         it should not be called anywhere
         it is defined in the discord module
         '''
-        # print messages written in the channels to the terminal screen 
-        print('{:%d/%m/%y %H:%M} @{} {}: {}'
-              .format(dt.datetime.now(), message.channel, message.author.name, message.content))
 
+        # print messages written in the channels to the terminal screen (logs everything)
+        # print('{:%d/%m/%y %H:%M} @{} {}: {}'
+        #       .format(dt.datetime.now(), message.channel, message.author.name, message.content))
+
+        if message.author == client.user:
+            print('{:%d/%m/%y %H:%M} @{} {}: {}'
+                  .format(dt.datetime.now(), message.channel, message.author.name, message.content))
+        
         
         if message.content.startswith('!r'):
             global default_mode
+
+            print('{:%d/%m/%y %H:%M} @{} user: {}'
+                  .format(dt.datetime.now(), message.channel, message.content))
+            
             try:
                 will_roll = True
                 number_of_dice, dice_type, explode, success, mode, mode_msg, aux_msg\
