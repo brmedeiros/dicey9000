@@ -4,7 +4,6 @@ import discord
 import asyncio
 import random
 import sys
-import os
 import datetime as dt
 
 import dice
@@ -82,7 +81,8 @@ def main():
                 yield from client.send_message(message.channel, results_string)
                 if success_msg != None:
                     yield from client.send_message(message.channel, success_msg)
-
+    
+    
     client.run(login.login_token(sys.argv[1]))
 
 if __name__ == '__main__':

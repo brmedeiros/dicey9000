@@ -1,1 +1,1 @@
-worker: python dicey9000.py MjU4Nzc1MDg4MzYxNTA0Nzg3.C0acsg.uF2KkHzyFk6bdLgI9TCBUfrht7c
+worker: python dicey9000.py dicey9000_token
