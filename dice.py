@@ -56,7 +56,7 @@ def dice_input_verification(input_command, default_mode = 'wod'):
         return 0, 0, 0, 0, 'simple', mode_message, None
     
     elif match1 != None and default_mode == 'wod':
-        return int(match1.group(1)), 10, 10, 7, 'wod', None, None
+        return int(match1.group(1)), 10, 10, 8, 'wod', None, None
 
     elif match1 != None and default_mode == 'simple':
         return int(match1.group(1)), 6, 0, 0, 'simple', None, None
