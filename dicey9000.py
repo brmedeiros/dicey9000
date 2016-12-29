@@ -3,10 +3,11 @@
 import discord
 import asyncio
 import random
+import sys
 import datetime as dt
 
 import dice
-import dicey9000_login_info as info
+import login
 import auxiliar_functions as auxf
 
 def main():
@@ -82,7 +83,7 @@ def main():
                     yield from client.send_message(message.channel, success_msg)
 
     
-    client.run(info.token)
+    client.run(login.login_token(sys.argv[1]))
 
 if __name__ == '__main__':
     main()
