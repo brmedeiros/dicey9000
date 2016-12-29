@@ -4,6 +4,7 @@ import discord
 import asyncio
 import random
 import sys
+import os
 import datetime as dt
 
 import dice
@@ -83,7 +84,8 @@ def main():
                     yield from client.send_message(message.channel, success_msg)
     
     
-    client.run(login.login_token(sys.argv[1]))
+    token = os.environ['DICEY9000_TOKEN']
+    client.run(token)
 
 if __name__ == '__main__':
     main()
