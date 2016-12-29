@@ -8,8 +8,7 @@ import os
 import datetime as dt
 
 import dice
-import login
-import auxiliar_functions as auxf
+import aux_functions as auxf
 
 def main():
 
