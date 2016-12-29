@@ -3,7 +3,7 @@
 import random
 import re
 import sys
-import auxiliar_functions as auxf
+import aux_functions as auxf
 # import pdb
 
 class RollInputError(Exception):
