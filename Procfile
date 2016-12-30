@@ -1,1 +1,1 @@
-worker: python dicey9000.py
+worker: python3 dicey9000.py
