@@ -99,20 +99,25 @@ def dice_input_verification(input_command, default_mode = 'wod'):
         return 0, 0, 0, 0, None, None, None
        
 
-def results_recorder(results_list, single_result, formated_results, format_option = False):
+def results_recorder(results_list, single_result, formated_results, success_condition, format_option = False):
     ''' 
     creates 2 lists of the results, one formated for printing
     no exploding dice: format_option = False
     exploding dice: format_option = True
     '''
     results_list.append(single_result)
-    if format_option == False:
-        formated_results.append('{0}'.format(single_result))
+    if not format_option:
+        if single_result < success_condition and success_condition > 0 or success_condition == 0:
+            formated_results.append('{0}'.format(single_result))
+        elif single_result >= success_condition and success_condition > 0:
+            formated_results.append('**{0}**'.format(single_result))
     else:
-        formated_results.append('x.{0}'.format(single_result))
+        if single_result < success_condition and success_condition > 0 or success_condition == 0:
+            formated_results.append('x.{0}'.format(single_result))
+        elif single_result >= success_condition and success_condition > 0:
+            formated_results.append('x.**{0}**'.format(single_result))
 
-
-def exploding_dice_check(explode_value, dice_type, results_list, single_result, formated_results):
+def exploding_dice_check(explode_value, dice_type, results_list, single_result, formated_results, success_condition):
     '''
     checks if there is an exploding dice condition
     if so the dice is rerolled if its result exceeds the explode value
@@ -121,7 +126,7 @@ def exploding_dice_check(explode_value, dice_type, results_list, single_result, 
         while single_result >= explode_value:
             single_result = random.randint(1,dice_type)
             # auxf.sp_print('x.{}'.format(single_result))
-            results_recorder(results_list, single_result, formated_results, 1)
+            results_recorder(results_list, single_result, formated_results, success_condition, True)
 
 
 def count_resuts_success(results_list, success_condition):
@@ -135,11 +140,11 @@ def count_resuts_success(results_list, success_condition):
                 success_counter += 1
         
         if success_counter == 0:
-            success_msg = 'Failure...'
+            success_msg = '**Failure...**'
         elif success_counter == 1:
-            success_msg = '1 success!'
+            success_msg = '**1** success!'
         elif success_counter > 1:
-            success_msg = '{} successes!'.format(success_counter)
+            success_msg = '**{}** successes!'.format(success_counter)
         return success_msg
             
 
@@ -155,8 +160,8 @@ def dice_roll(number_of_dice, dice_type = 10, explode = 0, success_condition = 0
         result = random.randint(1,dice_type)
         # auxf.sp_print('{0:2}.'.format(i+1), result) # for printing in a 2-ish column table
         # auxf.sp_print(result) # for printing in a single line
-        results_recorder(results, result, formated_results)
-        exploding_dice_check(explode, dice_type, results, result, formated_results)
+        results_recorder(results, result, formated_results, success_condition)
+        exploding_dice_check(explode, dice_type, results, result, formated_results, success_condition)
         # print() # for printing in a 2-ish column table
     # print() # for printing in a single line
     
