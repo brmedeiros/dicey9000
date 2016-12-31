@@ -1,1 +1,1 @@
-web: (python3 -m http.server $PORT) && (python3 dicey9000.py)
+web: (python3 -m http.server $PORT &) && (python3 dicey9000.py)
