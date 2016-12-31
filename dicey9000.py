@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 
+import os
 import discord
 import asyncio
 import random
-import sys
-import os
 import datetime as dt
 
 import dice
@@ -15,7 +14,7 @@ def main():
     client = discord.Client()
     
         
-    @client.async_event # equivalent to @client.event \n @asyncio.courotine
+    @client.async_event # equivalent to @client.event\n@asyncio.courotine
     def on_ready():
         '''
         this function represents the event 'being ready'...
@@ -39,10 +38,6 @@ def main():
         it should not be called anywhere
         it is defined in the discord module
         '''
-
-        # print messages written in the channels to the terminal screen (logs everything)
-        # print('{:%d/%m/%y %H:%M} @{} {}: {}'
-        #       .format(dt.datetime.now(), message.channel, message.author.name, message.content))
 
         if message.author == client.user:
             print('{:%d/%m/%y %H:%M} @{} {}: {}'

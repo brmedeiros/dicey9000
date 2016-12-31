@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 
-import random
 import re
-import sys
+import random
 import aux_functions as auxf
 # import pdb
 
