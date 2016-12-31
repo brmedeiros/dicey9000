@@ -1,1 +1,1 @@
-web: python3 dicey9000.py
+web: python3 dicey9000.py ${5000}
