@@ -1,1 +1,1 @@
-web: python3 dicey9000.py ${5000}
+web: python3 dicey9000.py ${PORT}
