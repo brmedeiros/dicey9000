@@ -21,7 +21,7 @@ def main():
         it should not be called anywhere
         it is defined in the discord module
         '''
-        print('DICEY9000 v.1.2\n------\nLogged in as {0}, id: {1}'.format(client.user, client.user.id))
+        print('DICEY9000 v.1.3\n------\nLogged in as {0}, id: {1}'.format(client.user, client.user.id))
         auxf.sp_print('Server(s) joined:')
         for server in client.servers:
             auxf.sp_print('{0}'.format(server))
