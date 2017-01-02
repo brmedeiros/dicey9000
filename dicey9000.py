@@ -11,8 +11,8 @@ import aux_functions as auxf
 
 def main():
 
-    client = discord.Client()    
-        
+    client = discord.Client()
+
     @client.async_event # equivalent to @client.event\n@asyncio.courotine
     def on_ready():
         '''
@@ -38,13 +38,13 @@ def main():
         '''
         if message.author == client.user:
             print('{:%d/%m/%y %H:%M} @{} {}: {}'
-                  .format(dt.datetime.now(), message.channel, message.author.name, message.content))        
+                  .format(dt.datetime.now(), message.channel, message.author.name, message.content))
         
         if message.content.startswith('!r'):
             global default_mode
 
             print('{:%d/%m/%y %H:%M} @{} user: {}'
-                  .format(dt.datetime.now(), message.channel, message.content))            
+                  .format(dt.datetime.now(), message.channel, message.content))
             try:
                 will_roll = True
                 number_of_dice, dice_type, explode, success, mode, mode_msg, aux_msg\
@@ -69,8 +69,8 @@ def main():
                 results_string = '  '.join(formated_results)
                 yield from client.send_message(message.channel, results_string)
                 if success_msg != None:
-                    yield from client.send_message(message.channel, success_msg)    
-    
+                    yield from client.send_message(message.channel, success_msg)
+
     token = os.environ['DICEY9000_TOKEN']
     client.run(token)
 

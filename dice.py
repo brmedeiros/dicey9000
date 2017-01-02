@@ -66,7 +66,7 @@ def dice_input_verification(input_command, default_mode = 'wod'):
 
     elif option_match:
         if option_match.group('help'):
-            aux_message = 'Find the documentation at:\nhttps://github.com/brmedeiros/dicey9000/blob/master/README.md'    
+            aux_message = 'Find the documentation at:\nhttps://github.com/brmedeiros/dicey9000/blob/master/README.md'
             return 0, 0, 0, 0, None, None, aux_message
         if option_match.group('mode') == 'wod':
             mode_message = 'Default mode (!r n) set to World of Darksness (WoD)'
@@ -74,7 +74,7 @@ def dice_input_verification(input_command, default_mode = 'wod'):
         if option_match.group('mode') == 'simple':
             mode_message = 'Default mode (!r n) set to simple (nd6)'
             return 0, 0, 0, 0, 'simple', mode_message, None
-    
+
     else:
         raise RollInputError
         return 0, 0, 0, 0, None, None, None
