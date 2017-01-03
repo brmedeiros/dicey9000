@@ -2,7 +2,6 @@
 
 import re
 import random
-import aux_functions as auxf
 
 class RollInputError(Exception):
     '''    raised if the input syntax is wrong, tells the use how it should be done'''
@@ -25,26 +24,26 @@ class ExplodingDiceTooSmallError(Exception):
         self.msg = 'Exploding value should be greater than 2'
 
 
-def dice_input_verification(input_command, default_mode = 'wod'):
+def dice_input_verification(input_command, mode = 'wod'):
     '''
     checks the input command, roll_match checks dice roll input
-    options_match checks help and default mode settings input
+    options_match checks help and default mode (!r n) settings input
     '''
     roll_match = re.match(r'!r (?P<number_of_dice>\d+)(d(?P<dice_type>\d+))?'\
                           r'(x(?P<explode_value>\d+))?(\?(?P<success_condition>\d+))?$', input_command)
 
     option_match = re.match(r'!r (?P<help>help)?(set (?P<mode>wod|simple))?$', input_command)
 
-    number_of_dice, dice_type, explode_value, success_condition, default_mode, mode_message, aux_message\
-    = 0, 0, 0, 0, default_mode, None, None
+    number_of_dice, dice_type, explode_value, success_condition, mode, mode_message, aux_message\
+    = 0, 0, 0, 0, mode, None, None
 
     if roll_match:
         number_of_dice = int(roll_match.group('number_of_dice'))
 
         if not roll_match.group('dice_type'):
-            if default_mode == 'wod':
+            if mode == 'wod':
                 return number_of_dice, 10, 10, 8, 'wod', None, None
-            if default_mode == 'simple':
+            if mode == 'simple':
                 return number_of_dice, 6, 0, 0, 'simple', None, None
         else:
             dice_type = int(roll_match.group('dice_type'))
@@ -62,11 +61,11 @@ def dice_input_verification(input_command, default_mode = 'wod'):
                      raise SuccessConditionError
                      return 0, 0, 0, 0, None, None, None
 
-        return number_of_dice, dice_type, explode_value, success_condition, default_mode, None, None
+        return number_of_dice, dice_type, explode_value, success_condition, mode, None, None
 
     elif option_match:
         if option_match.group('help'):
-            aux_message = 'Find the documentation at:\nhttps://github.com/brmedeiros/dicey9000/blob/master/README.md'
+            aux_message = 'Find all available commands at:\nhttps://github.com/brmedeiros/dicey9000/blob/master/README.md'
             return 0, 0, 0, 0, None, None, aux_message
         if option_match.group('mode') == 'wod':
             mode_message = 'Default mode (!r n) set to World of Darksness (WoD)'
@@ -106,7 +105,6 @@ def exploding_dice_check(explode_value, dice_type, results_list, single_result, 
     if explode_value > 0:
         while single_result >= explode_value:
             single_result = random.randint(1,dice_type)
-            # auxf.sp_print('x.{}'.format(single_result))
             results_recorder(results_list, single_result, formated_results, success_condition, True)
 
 
