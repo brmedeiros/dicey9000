@@ -4,7 +4,7 @@ import re
 import random
 
 class RollInputError(Exception):
-    '''    raised if the input syntax is wrong, tells the use how it should be done'''
+    '''raised if the input syntax is wrong, tells the use how it should be done'''
     def __init__(self):
         self.msg = 'Try "!r n" (n>0) or "!r help" to find more roll options...'
 
@@ -34,8 +34,7 @@ def dice_input_verification(input_command, mode = 'wod'):
 
     option_match = re.match(r'!r (?P<help>help)?(set (?P<mode>wod|simple))?$', input_command)
 
-    number_of_dice, dice_type, explode_value, success_condition, mode, mode_message, aux_message\
-    = 0, 0, 0, 0, mode, None, None
+    explode_value, success_condition = 0, 0
 
     if roll_match:
         number_of_dice = int(roll_match.group('number_of_dice'))
