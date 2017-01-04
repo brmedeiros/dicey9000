@@ -3,26 +3,7 @@
 import re
 import random
 
-class RollInputError(Exception):
-    '''raised if the input syntax is wrong, tells the use how it should be done'''
-    def __init__(self):
-        self.msg = 'Try "!r n" (n>0) or "!r help" to find more roll options...'
-
-class SuccessConditionError(Exception):
-    '''raised if the success condition is greater than the dice size'''
-    def __init__(self):
-        self.msg = 'Success condition value should not be greater than the dice size...'
-
-class ExplodingDiceError(Exception):
-    '''raised if the explode value is greater than the dice size'''
-    def __init__(self):
-        self.msg = 'Exploding value should not be greater than dice size'
-
-class ExplodingDiceTooSmallError(Exception):
-    '''raised if the explode value is 1 or 2 (avoids long loops)'''
-    def __init__(self):
-        self.msg = 'Exploding value should be greater than 2'
-
+from dice_exceptions import *
 
 def dice_input_verification(input_command, mode = 'wod'):
     '''
@@ -97,10 +78,7 @@ def results_recorder(results_list, single_result, formated_results, success_cond
 
 
 def exploding_dice_check(explode_value, dice_type, results_list, single_result, formated_results, success_condition):
-    '''
-    checks if there is an exploding dice condition
-    if so the dice is rerolled if its result exceeds the explode value
-    '''
+    '''checks if there is an exploding dice condition and rerolls the dice if it explodes'''
     if explode_value > 0:
         while single_result >= explode_value:
             single_result = random.randint(1,dice_type)
@@ -108,9 +86,7 @@ def exploding_dice_check(explode_value, dice_type, results_list, single_result, 
 
 
 def count_resuts_success(results_list, success_condition):
-    '''
-    counts the number of successes and informs the user about it
-    '''
+    '''counts the number of successes and informs the user about it'''
     if success_condition > 0:
         success_counter = 0
         for single_result in results_list:
@@ -118,7 +94,7 @@ def count_resuts_success(results_list, success_condition):
                 success_counter += 1
         
         if success_counter == 0:
-            success_msg = '**Failure...**'
+            success_msg = 'Failure...'
         elif success_counter == 1:
             success_msg = '**1** success!'
         elif success_counter > 1:
@@ -127,11 +103,7 @@ def count_resuts_success(results_list, success_condition):
             
 
 def dice_roll(number_of_dice, dice_type = 10, explode = 0, success_condition = 0):
-    '''
-    rolls the dice...
-    the results list saves the dice rolls if success_condition > 0
-    formated_results saves the information about exploded dice
-    '''
+    '''rolls the dice... results are saved if success_condition > 0'''
     results = []
     formated_results = []
     for i in range(number_of_dice):
@@ -143,22 +115,8 @@ def dice_roll(number_of_dice, dice_type = 10, explode = 0, success_condition = 0
     return results, formated_results, success_msg
     
 
-def dice_exception_msg(exception, exception_message):
-    '''
-    returns the exception message and returns False
-    (later used to decide if the roll will be made)
-    '''
-    s1 = 'An exception of type {0} occurred.'.format(type(exception).__name__)
-    s2 = '------\n{0}'.format(exception_message)
-    msg_string = '\n'.join([s1, s2])
-    return msg_string, False
-
-
 def should_it_roll(input_command, exception_tuple):
-    '''
-    Makes a dice roll if no dice exception occurs.
-    If an exception happens, the exception message is printed to the user
-    '''
+    '''Makes a dice roll if no dice exception occurs. If it happens, the exception message is printed'''
     pass
 
 
@@ -166,7 +124,7 @@ def main():
     try:
         will_roll = True
         n, d, x, s, mode, mode_msg, aux_msg = dice_input_verification(input('Type the roll you want to make...\n'))
-        
+
         # while mode_msg != None:
         #     print(mode_msg)
         #     n, d, x, s, mode, mode_msg, aux_msg = dice_input_verification(input('Ready...\n'), mode)
@@ -176,17 +134,15 @@ def main():
         #     n, d, x, s, mode, mode_msg, aux_msg = dice_input_verification(input('Ready...\n'), mode)
 
     except (SuccessConditionError, ExplodingDiceError, ExplodingDiceTooSmallError, RollInputError) as ex:
-        exception_msg_string, will_roll = dice_exception_msg(ex, ex.msg)
-        print(exception_msg_string)        
+        print(dice_exception_msg(ex, ex.msg))
+        will_roll = False
 
-    if will_roll == True: 
+    if will_roll == True:
         res, formated_results, r_msg = dice_roll(n, d, x, s)
         results_string = ' '.join(formated_results)
         print(results_string)
-        if r_msg != None: 
+        if r_msg != None:
             print(r_msg)
 
 if __name__ == '__main__':
     main()
-    
-    

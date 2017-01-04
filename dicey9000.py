@@ -8,6 +8,7 @@ import datetime as dt
 
 import dice
 import aux_functions as auxf
+from dice_exceptions import *
 
 def main():
 
@@ -17,8 +18,7 @@ def main():
     def on_ready():
         '''
         this function represents the event 'being ready'...
-        it should not be called anywhere
-        it is defined in the discord module
+        it should not be called anywhere and it is defined in the discord module
         '''
         print('DICEY9000 v.1.4\n------\nLogged in as {0}, id: {1}'.format(client.user, client.user.id))
         auxf.sp_print('Server(s) joined:')
@@ -33,8 +33,7 @@ def main():
     def on_message(message):
         '''
         this function represents a 'message event' in any of the channels...
-        it should not be called anywhere
-        it is defined in the discord module
+        it should not be called anywhere and it is defined in the discord module
         '''
         if message.author == client.user:
             print('{:%d/%m/%y %H:%M} @{} {}: {}'
@@ -59,10 +58,9 @@ def main():
                     yield from client.send_message(message.channel, aux_msg)
                     will_roll = False
 
-            except (dice.SuccessConditionError, dice.ExplodingDiceError,
-                    dice.ExplodingDiceTooSmallError, dice.RollInputError) as ex:
-                exception_msg_string, will_roll = dice.dice_exception_msg(ex, ex.msg)
-                yield from client.send_message(message.channel, exception_msg_string)
+            except (SuccessConditionError, ExplodingDiceError, ExplodingDiceTooSmallError, RollInputError) as ex:
+                yield from client.send_message(message.channel, dice_exception_msg(ex, ex.msg))
+                will_roll = False
 
             if will_roll == True: 
                 results, formated_results, success_msg  = dice.dice_roll(number_of_dice, dice_type, explode, success)
