@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import unittest
 import dice
 from dice_exceptions import *
@@ -24,7 +22,7 @@ class DiceInputVerificationTest(unittest.TestCase):
         self.assertEqual([n, d, x, s, mode, mode_msg, aux_msg], [39, 10, 5, 8, 'wod', None, None])
         n, d, x, s, mode, mode_msg, aux_msg = dice.dice_input_verification('!r 1d4x4?4')
         self.assertEqual([n, d, x, s, mode, mode_msg, aux_msg], [1, 4, 4, 4, 'wod', None, None])
-        
+
     def test_dice_options_input(self):
         n, d, x, s, mode, mode_msg, aux_msg = dice.dice_input_verification('!r help')
         help_string = 'Find all available commands at:\nhttps://github.com/brmedeiros/dicey9000/blob/master/README.md'
@@ -58,7 +56,7 @@ class DiceInputVerificationTest(unittest.TestCase):
         self.assertRaises(ExplodingDiceTooSmallError, dice.dice_input_verification, '!r 8d6x2')
         self.assertRaises(ExplodingDiceTooSmallError, dice.dice_input_verification, '!r 3d70x1?10')
         self.assertRaises(ExplodingDiceTooSmallError, dice.dice_input_verification, '!r 10d2x2?2')
-    
+
     def test_success_condition_exception(self):
         self.assertRaises(SuccessConditionError, dice.dice_input_verification, '!r 2d8?9')
         self.assertRaises(SuccessConditionError, dice.dice_input_verification, '!r 2d15?55')
