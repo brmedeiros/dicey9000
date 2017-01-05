@@ -2,8 +2,8 @@
 
 import re
 import random
-
-from dice_exceptions import *
+import dice_config as dcfg
+import dice_exceptions as dexc
 
 def dice_input_verification(input_command, mode = 'wod'):
     '''
@@ -22,41 +22,41 @@ def dice_input_verification(input_command, mode = 'wod'):
 
         if not roll_match.group('dice_type'):
             if mode == 'wod':
-                return number_of_dice, 10, 10, 8, 'wod', None, None
+                return number_of_dice, 10, 10, 8, 'wod', None
             if mode == 'simple':
-                return number_of_dice, 6, 0, 0, 'simple', None, None
+                return number_of_dice, 6, 0, 0, 'simple', None
         else:
             dice_type = int(roll_match.group('dice_type'))
             if roll_match.group('explode_value'):
                 explode_value = int(roll_match.group('explode_value'))
                 if explode_value > dice_type:
-                    raise ExplodingDiceError
+                    raise dexc.ExplodingDiceError
                 elif explode_value < 3:
-                    raise ExplodingDiceTooSmallError
+                    raise dexc.ExplodingDiceTooSmallError
             if roll_match.group('success_condition'):
                 success_condition = int(roll_match.group('success_condition'))
                 if success_condition > dice_type:
-                    raise SuccessConditionError
+                    raise dexc.SuccessConditionError
 
-        return number_of_dice, dice_type, explode_value, success_condition, mode, None, None
+        return number_of_dice, dice_type, explode_value, success_condition, mode, None
 
     elif option_match:
         if option_match.group('help'):
-            aux_message = 'Find all available commands at:\nhttps://github.com/brmedeiros/dicey9000/blob/master/README.md'
-            return 0, 0, 0, 0, None, None, aux_message
+            cmd_msg = 'Find all available commands at:\nhttps://github.com/brmedeiros/dicey9000/blob/master/README.md'
+            return 0, 0, 0, 0, mode, cmd_msg
         if option_match.group('mode') == 'wod':
-            mode_message = 'Default mode (!r n) set to World of Darksness (WoD)'
-            return 0, 0, 0, 0, 'wod', mode_message, None
+            cmd_msg = 'Default mode (!r n) set to World of Darksness (WoD)'
+            return 0, 0, 0, 0, 'wod', cmd_msg
         if option_match.group('mode') == 'simple':
-            mode_message = 'Default mode (!r n) set to simple (nd6)'
-            return 0, 0, 0, 0, 'simple', mode_message, None
+            cmd_msg = 'Default mode (!r n) set to simple (nd6)'
+            return 0, 0, 0, 0, 'simple', cmd_msg
 
     else:
-        raise RollInputError
+        raise dexc.RollInputError
 
 
 def results_recorder(results_list, single_result, formated_results, success_condition, format_option = False):
-    ''' 
+    '''
     creates 2 lists of the results, one formated for printing...
     no exploding dice: format_option = False; exploding dice: format_option = True
     '''
@@ -88,7 +88,7 @@ def count_resuts_success(results_list, success_condition):
         for single_result in results_list:
             if single_result >= success_condition:
                 success_counter += 1
-        
+
         if success_counter == 0:
             success_msg = 'Failure...'
         elif success_counter == 1:
@@ -96,7 +96,7 @@ def count_resuts_success(results_list, success_condition):
         elif success_counter > 1:
             success_msg = '**{}** successes!'.format(success_counter)
         return success_msg
-            
+
 
 def dice_roll(number_of_dice, dice_type = 10, explode = 0, success_condition = 0):
     '''rolls the dice... results are saved if success_condition > 0'''
@@ -106,10 +106,10 @@ def dice_roll(number_of_dice, dice_type = 10, explode = 0, success_condition = 0
         result = random.randint(1,dice_type)
         results_recorder(results, result, formated_results, success_condition)
         exploding_dice_check(explode, dice_type, results, result, formated_results, success_condition)
-    
+
     success_msg = count_resuts_success(results, success_condition)
     return results, formated_results, success_msg
-    
+
 
 def should_it_roll(input_command, exception_tuple):
     '''Makes a dice roll if no dice exception occurs. If it happens, the exception message is printed'''
@@ -119,18 +119,14 @@ def should_it_roll(input_command, exception_tuple):
 def main():
     try:
         will_roll = True
-        n, d, x, s, mode, mode_msg, aux_msg = dice_input_verification(input('Type the roll you want to make...\n'))
+        n, d, x, s, mode, msg = dice_input_verification(input('Type the roll you want to make...\n'), dcfg.default_mode)
+        while msg != None:
+            print(msg)
+            if dcfg.default_mode != mode: dcfg.default_mode = mode
+            n, d, x, s, mode, msg = dice_input_verification(input('Ready...\n'), dcfg.default_mode)
 
-        # while mode_msg != None:
-        #     print(mode_msg)
-        #     n, d, x, s, mode, mode_msg, aux_msg = dice_input_verification(input('Ready...\n'), mode)
-
-        # while aux_msg != None:
-        #     print(aux_msg)
-        #     n, d, x, s, mode, mode_msg, aux_msg = dice_input_verification(input('Ready...\n'), mode)
-
-    except (SuccessConditionError, ExplodingDiceError, ExplodingDiceTooSmallError, RollInputError) as ex:
-        print(dice_exception_msg(ex, ex.msg))
+    except (dexc.SuccessConditionError, dexc.ExplodingDiceError, dexc.ExplodingDiceTooSmallError, dexc.RollInputError) as ex:
+        print(dexc.dice_exception_msg(ex, ex.msg))
         will_roll = False
 
     if will_roll == True:

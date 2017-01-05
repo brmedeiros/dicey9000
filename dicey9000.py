@@ -5,10 +5,10 @@ import discord
 import asyncio
 import random
 import datetime as dt
-
 import dice
+import dice_config as dcfg
+import dice_exceptions as dexc
 import aux_functions as auxf
-from dice_exceptions import *
 
 def main():
 
@@ -25,11 +25,8 @@ def main():
         for server in client.servers:
             auxf.sp_print('{0}'.format(server))
         print('\n------')
-        
-        global default_mode
-        default_mode = 'wod'
 
-    @client.async_event    
+    @client.async_event
     def on_message(message):
         '''
         this function represents a 'message event' in any of the channels...
@@ -38,31 +35,26 @@ def main():
         if message.author == client.user:
             print('{:%d/%m/%y %H:%M} @{} {}: {}'
                   .format(dt.datetime.now(), message.channel, message.author.name, message.content))
-        
-        if message.content.startswith('!r'):
-            global default_mode
 
+        if message.content.startswith('!r'):
             print('{:%d/%m/%y %H:%M} @{} user: {}'
                   .format(dt.datetime.now(), message.channel, message.content))
             try:
                 will_roll = True
-                number_of_dice, dice_type, explode, success, mode, mode_msg, aux_msg\
-                = dice.dice_input_verification(message.content, default_mode)
+                number_of_dice, dice_type, explode, success, mode, cmd_msg\
+                = dice.dice_input_verification(message.content, dcfg.default_mode)
 
-                if mode_msg != None:
-                    yield from client.send_message(message.channel, mode_msg)
-                    default_mode = mode
-                    will_roll = False
-                
-                if aux_msg != None:
-                    yield from client.send_message(message.channel, aux_msg)
+                if cmd_msg != None:
+                    yield from client.send_message(message.channel, cmd_msg)
+                    if dcfg.default_mode != mode: dcfg.default_mode = mode
                     will_roll = False
 
-            except (SuccessConditionError, ExplodingDiceError, ExplodingDiceTooSmallError, RollInputError) as ex:
-                yield from client.send_message(message.channel, dice_exception_msg(ex, ex.msg))
+            except (dexc.SuccessConditionError, dexc.ExplodingDiceError,
+                    dexc.ExplodingDiceTooSmallError, dexc.RollInputError) as ex:
+                yield from client.send_message(message.channel, dexc.dice_exception_msg(ex, ex.msg))
                 will_roll = False
 
-            if will_roll == True: 
+            if will_roll == True:
                 results, formated_results, success_msg  = dice.dice_roll(number_of_dice, dice_type, explode, success)
                 results_string = '  '.join(formated_results)
                 yield from client.send_message(message.channel, results_string)
