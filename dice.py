@@ -10,10 +10,10 @@ def dice_input_verification(input_command, mode = 'wod'):
     checks the input command, roll_match checks dice roll input
     options_match checks help and default mode (!r n) settings input
     '''
-    roll_match = re.match(r'!r (?P<number_of_dice>\d+)(d(?P<dice_type>\d+))?'\
+    roll_match = re.match(r'!r (?P<number_of_dice>\d+)(d(?P<dice_type>\d+))?'
                           r'(x(?P<explode_value>\d+))?(\?(?P<success_condition>\d+))?$', input_command)
 
-    option_match = re.match(r'!r (?P<help>help)?(set (?P<mode>wod|simple))?$', input_command)
+    option_match = re.match(r'!r ((?P<help>help)|(set (?P<mode>wod|simple)))$', input_command)
 
     explode_value, success_condition = 0, 0
 
@@ -31,15 +31,12 @@ def dice_input_verification(input_command, mode = 'wod'):
                 explode_value = int(roll_match.group('explode_value'))
                 if explode_value > dice_type:
                     raise ExplodingDiceError
-                    return 0, 0, 0, 0, None, None, None
                 elif explode_value < 3:
                     raise ExplodingDiceTooSmallError
-                    return 0, 0, 0, 0, None, None, None
             if roll_match.group('success_condition'):
-                 success_condition = int(roll_match.group('success_condition'))
-                 if success_condition > dice_type:
-                     raise SuccessConditionError
-                     return 0, 0, 0, 0, None, None, None
+                success_condition = int(roll_match.group('success_condition'))
+                if success_condition > dice_type:
+                    raise SuccessConditionError
 
         return number_of_dice, dice_type, explode_value, success_condition, mode, None, None
 
@@ -56,7 +53,6 @@ def dice_input_verification(input_command, mode = 'wod'):
 
     else:
         raise RollInputError
-        return 0, 0, 0, 0, None, None, None
 
 
 def results_recorder(results_list, single_result, formated_results, success_condition, format_option = False):
