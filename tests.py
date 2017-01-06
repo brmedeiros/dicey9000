@@ -47,7 +47,8 @@ class DiceInputVerificationTest(unittest.TestCase):
 
     def test_dice_input_exception(self):
         examples = ['!r ', '!r dmeoamdef', '!r kelf laij', '!r 2 3', '!r 6dz','!r 30dx', '!r 5d7x7?', '!r 9d10?',
-                    '!r 6d8x?10', '!r 12d12x18?', '!r set ', '!r set help', '!r set akneoi', '!r 3d6 help', '!r set 6d8?4 wod']
+                    '!r -10', '!r -6d8', '!r 6d8x?10', '!r 12d12x18?', '!r set ', '!r set help', '!r set akneoi',
+                    '!r 3d6 help', '!r set 6d8?4 wod']
         for mode in ['wod', 'simple']:
             for example in examples:
                 self.assertRaises(dexc.RollInputError, dice.dice_input_verification, example, mode)
@@ -69,3 +70,17 @@ class DiceInputVerificationTest(unittest.TestCase):
         for mode in ['wod', 'simple']:
             for example in examples:
                 self.assertRaises(dexc.SuccessConditionError, dice.dice_input_verification, example, mode)
+
+class ResultsRecorderTest(unittest.TestCase):
+    def test_results_recorder(self):
+        examples = [
+            [[7, 12, 1, 6, 10, 25, 555, 2], 10, ['7', '**12**', '1', '6', '**10**', '**25**', '**555**', '2'], False],
+            [[2, 5, 87, 6, 4, 65], 50, ['2', '5', '**87**', '6', '4', '**65**'], False],
+            [[6, 8, 9, 1, 1, 2], 0, ['x.6', 'x.8', 'x.9', 'x.1', 'x.1', 'x.2'], True],
+            [[6, 8, 9, 1, 1, 2], 5, ['x.**6**', 'x.**8**', 'x.**9**', 'x.1', 'x.1', 'x.2'], True]
+        ]
+        for example in examples:
+            list1, list2 = [], []
+            for result in example[0]:
+                dice.results_recorder(list1, result, list2, example[1], example[3])
+            self.assertEqual([list1, list2], [example[0], example[2]])

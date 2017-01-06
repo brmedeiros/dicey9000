@@ -138,7 +138,7 @@ def main():
                 if r_msg != None:
                     print(r_msg)
     except KeyboardInterrupt:
-        print('bye!')
+        print('\nbye!')
 
 if __name__ == '__main__':
     main()
