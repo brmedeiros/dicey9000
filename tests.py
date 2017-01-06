@@ -30,15 +30,20 @@ class DiceInputVerificationTest(unittest.TestCase):
              n, d, x, s, mode, cmd_msg = dice.dice_input_verification(example, 'simple')
              self.assertEqual([n, d, x, s, mode, cmd_msg], value)
 
-    def test_dice_options_input(self):
-        examples = {'!r help': [0, 0, 0, 0, dcfg.default_mode, 'Find all available commands at:'
-                                '\nhttps://github.com/brmedeiros/dicey9000/blob/master/README.md'],
-                    '!r set wod': [0, 0, 0, 0, 'wod', 'Default mode (!r n) set to World of Darksness (WoD)'],
+    def test_dice_options_help(self):
+        examples = {'!r help': [0, 0, 0, 0, dcfg.mode, 'Find all available commands at:'
+                                '\nhttps://github.com/brmedeiros/dicey9000/blob/master/README.md']}
+        for example, value in examples.items():
+            n, d, x, s, mode, cmd_msg  = dice.dice_input_verification(example, dcfg.mode)
+            self.assertEqual([n, d, x, s, mode, cmd_msg], value)
+
+    def test_dice_options_mode(self):
+        examples = {'!r set wod': [0, 0, 0, 0, 'wod', 'Default mode (!r n) set to World of Darksness (WoD)'],
                     '!r set simple': [0, 0, 0, 0, 'simple', 'Default mode (!r n) set to simple (nd6)']}
-        for mode in ['wod', 'simple']:
+        for dmode in ['wod', 'simple']:
             for example, value in examples.items():
-                n, d, x, s, dcfg.default_mode, cmd_msg  = dice.dice_input_verification(example)
-                self.assertEqual([n, d, x, s, dcfg.default_mode, cmd_msg], value)
+                n, d, x, s, mode, cmd_msg  = dice.dice_input_verification(example, dmode)
+                self.assertEqual([n, d, x, s, mode, cmd_msg], value)
 
     def test_dice_input_exception(self):
         examples = ['!r ', '!r dmeoamdef', '!r kelf laij', '!r 2 3', '!r 6dz','!r 30dx', '!r 5d7x7?', '!r 9d10?',

@@ -118,23 +118,27 @@ def should_it_roll(input_command, exception_tuple):
 
 def main():
     try:
-        will_roll = True
-        n, d, x, s, mode, msg = dice_input_verification(input('Type the roll you want to make...\n'), dcfg.default_mode)
-        while msg != None:
-            print(msg)
-            if dcfg.default_mode != mode: dcfg.default_mode = mode
-            n, d, x, s, mode, msg = dice_input_verification(input('Ready...\n'), dcfg.default_mode)
+        while True:
+            try:
+                will_roll = True
+                n, d, x, s, dcfg.mode, msg = dice_input_verification(input('Type the roll you want to make...\n'), dcfg.mode)
+                while msg != None:
+                    print(msg)
+                    n, d, x, s, dcfg.mode, msg = dice_input_verification(input('Ready...\n'), dcfg.mode)
 
-    except (dexc.SuccessConditionError, dexc.ExplodingDiceError, dexc.ExplodingDiceTooSmallError, dexc.RollInputError) as ex:
-        print(dexc.dice_exception_msg(ex, ex.msg))
-        will_roll = False
+            except (dexc.SuccessConditionError, dexc.ExplodingDiceError,
+                    dexc.ExplodingDiceTooSmallError, dexc.RollInputError) as ex:
+                print(dexc.dice_exception_msg(ex, ex.msg))
+                will_roll = False
 
-    if will_roll == True:
-        res, formated_results, r_msg = dice_roll(n, d, x, s)
-        results_string = ' '.join(formated_results)
-        print(results_string)
-        if r_msg != None:
-            print(r_msg)
+            if will_roll == True:
+                res, formated_results, r_msg = dice_roll(n, d, x, s)
+                results_string = ' '.join(formated_results)
+                print(results_string)
+                if r_msg != None:
+                    print(r_msg)
+    except KeyboardInterrupt:
+        print('bye!')
 
 if __name__ == '__main__':
     main()

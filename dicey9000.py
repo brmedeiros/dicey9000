@@ -41,12 +41,11 @@ def main():
                   .format(dt.datetime.now(), message.channel, message.content))
             try:
                 will_roll = True
-                number_of_dice, dice_type, explode, success, mode, cmd_msg\
-                = dice.dice_input_verification(message.content, dcfg.default_mode)
+                number_of_dice, dice_type, explode, success, dcfg.mode, cmd_msg\
+                = dice.dice_input_verification(message.content, dcfg.mode)
 
                 if cmd_msg != None:
                     yield from client.send_message(message.channel, cmd_msg)
-                    if dcfg.default_mode != mode: dcfg.default_mode = mode
                     will_roll = False
 
             except (dexc.SuccessConditionError, dexc.ExplodingDiceError,
