@@ -108,7 +108,7 @@ def dice_roll(number_of_dice, dice_type = 10, explode = 0, success_condition = 0
         exploding_dice_check(explode, dice_type, results, result, formated_results, success_condition)
 
     success_msg = count_resuts_success(results, success_condition)
-    return results, formated_results, success_msg
+    return formated_results, success_msg
 
 
 def should_it_roll(input_command, exception_tuple):
@@ -132,7 +132,7 @@ def main():
                 will_roll = False
 
             if will_roll == True:
-                res, formated_results, r_msg = dice_roll(n, d, x, s)
+                formated_results, r_msg = dice_roll(n, d, x, s)
                 results_string = ' '.join(formated_results)
                 print(results_string)
                 if r_msg != None:

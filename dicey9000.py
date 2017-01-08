@@ -54,7 +54,7 @@ def main():
                 will_roll = False
 
             if will_roll == True:
-                results, formated_results, success_msg  = dice.dice_roll(number_of_dice, dice_type, explode, success)
+                formated_results, success_msg = dice.dice_roll(number_of_dice, dice_type, explode, success)
                 results_string = '  '.join(formated_results)
                 yield from client.send_message(message.channel, results_string)
                 if success_msg != None:
