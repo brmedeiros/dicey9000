@@ -1,4 +1,5 @@
 import unittest
+import unittest.mock
 import dice
 import dice_config as dcfg
 import dice_exceptions as dexc
@@ -84,3 +85,15 @@ class ResultsRecorderTest(unittest.TestCase):
             for result in example[0]:
                 dice.results_recorder(list1, result, list2, example[1], example[3])
             self.assertEqual([list1, list2], [example[0], example[2]])
+
+# class ExplodingDiceCheckTest(unittest.TestCase):
+#     @unittest.mock.patch('random.randint')
+#     def test_exploding_dice_check(self, randint_call):
+#         randint_call.return_value = 7 
+#         examples = [
+#             [6, 12, [0], [6], ['0'], 8], 
+#         ]
+#         for example in examples:
+#             for result in example[3]:
+#                 dice.exploding_dice_check(example[0], example[1], example[2], result, example[4], list1, example[5])
+#                 self.assertEqual(list1, example[4])
