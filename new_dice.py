@@ -5,29 +5,29 @@ import random
 import dice_config as dcfg
 import dice_exceptions as dexc
 
-class DiceRollClass():
-    
+class DiceRoll():
+
     def __init__(self, number_of_dice, dice_type, roll_modifier, explode_value, success_condition):
         self.number_of_dice = number_of_dice
         self.dice_type = dice_type
         self.roll_modifier = roll_modifier
         self.explode_value = explode_value
         self.success_condition = success_condition
-        self.results = []
         self.successes = 0
+        self.results = []
         self.formated_results = []
-                
+
     def roll_dice(self):
         if self.number_of_dice != None:
             self.results = [random.randint(1, self.dice_type) for i in range(self.number_of_dice)]
             self.formated_results = ['{}'.format(result) for result in self.results]
             return self.results
-    
+
     @property
     def total(self):
         if self.roll_modifier != None:
             return sum(self.results) + self.roll_modifier
-   
+
     def explode_dice(self):
         if self.explode_value != None:
             for i, result in enumerate(self.results):
@@ -141,7 +141,7 @@ def main():
                 will_roll = False
 
             if will_roll == True:
-                my_roll = DiceRollClass(n, d, m, x, s)
+                my_roll = DiceRoll(n, d, m, x, s)
                 my_roll.roll_dice()
                 my_roll.explode_dice()
                 my_roll.success_counter()
@@ -150,28 +150,5 @@ def main():
     except KeyboardInterrupt:
         print('\nbye!')
 
-
-
-    #dice_input_verification(input('Type the roll you want to make...\n'), dcfg.mode)
-    #dice_input_verification(input('Type the roll you want to make...\n'), 'simple')
-
-
-    # for i in range(5):
-    #     roll = DiceRollClass(None, None, None, None, None)
-    #     # print(roll.roll_dice(), roll.successes, roll.total)
-    #     roll.roll_dice()
-    #     print(roll.explode_dice(), roll.success_counter())
-    #     # print(roll.formated_results)
-    #     print(roll.output())
-    #     print()
-
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
