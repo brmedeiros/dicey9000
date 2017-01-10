@@ -58,13 +58,7 @@ def main():
                 my_roll.roll_dice()
                 my_roll.explode_dice()
                 my_roll.success_counter()
-                yield from client.send_message(message.channel, my_roll.output())
-
-                # formated_results, success_msg = dice.dice_roll(number_of_dice, dice_type, explode, success)
-                # results_string = '  '.join(formated_results)
-                # yield from client.send_message(message.channel, results_string)
-                # if success_msg != None:
-                #     yield from client.send_message(message.channel, success_msg)
+                yield from client.send_message(message.channel, my_roll.output())                
 
     token = os.environ['DICEY9000_TOKEN']
     client.run(token)
