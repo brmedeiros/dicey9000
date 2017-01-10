@@ -5,7 +5,7 @@ import random
 import dice_config as dcfg
 import dice_exceptions as dexc
 
-class RollClass():
+class DiceRollClass():
     
     def __init__(self, number_of_dice, dice_type, roll_modifier, explode_value, success_condition):
         self.number_of_dice = number_of_dice
@@ -14,9 +14,9 @@ class RollClass():
         self.explode_value = explode_value
         self.success_condition = success_condition
         self.results = []
+        self.successes = 0
         self.formated_results = []
-        self.output = ''
-        
+                
     def roll_dice(self):
         self.results = [random.randint(1, self.dice_type) for i in range(self.number_of_dice)]
         self.formated_results = ['{}'.format(result) for result in self.results]
@@ -24,38 +24,63 @@ class RollClass():
     
     @property
     def total(self):
-        return sum(self.results) + self.roll_modifier
+        if self.roll_modifier != None:
+            return sum(self.results) + self.roll_modifier
    
     def explode_dice(self):
-        for i, result in enumerate(self.results):
-            if result >= self.explode_value:
-                self.results[i+1:i+1] = [random.randint(1, self.dice_type)]
-                self.formated_results[i+1:i+1] = ['x.{}'.format(self.results[i+1])]
+        if self.explode_value != None:
+            for i, result in enumerate(self.results):
+                if result >= self.explode_value:
+                    self.results[i+1:i+1] = [random.randint(1, self.dice_type)]
+                    self.formated_results[i+1:i+1] = ['x.{}'.format(self.results[i+1])]
         return self.results
 
-    @property
-    def successes(self):
-        success_counter = 0
-        for i, result in enumerate(self.results):
-            if result >= self.success_condition:
-                success_counter += 1
-                self.formated_results[i] = '**{}**'.format(self.formated_results[i])
-        return success_counter
+    def success_counter(self):
+        if self.success_condition != None:
+            self.successes = 0
+            for i, result in enumerate(self.results):
+                if result >= self.success_condition:
+                    self.successes += 1
+                    self.formated_results[i] = '**{}**'.format(self.formated_results[i])
+        return self.successes
 
+    def output(self):
+        success_msg = ''
+        if self.success_condition != None:
+            if self.successes == 0:
+                success_msg = '\nFailure...'
+            elif self.successes == 1:
+                success_msg = '\n**1** success!'
+            elif self.successes > 1:
+                success_msg = '\n**{}** successes!'.format(self.successes)
+        if self.roll_modifier != None:
+            if self.roll_modifier >= 0:
+                return ' + '.join(self.formated_results) + ' + {} = {}'.format(self.roll_modifier, self.total) + success_msg
+            else:
+                return ' + '.join(self.formated_results) + ' + ({}) = {}'.format(self.roll_modifier, self.total) + success_msg
+        else:
+            return '  '.join(self.formated_results) + success_msg
 
-
-
-        # if success_counter == 0:
-        #     success_msg = 'Failure...'
-        # elif success_counter == 1:
-        #     success_msg = '**1** success!'
-        # elif success_counter > 1:
-        #     success_msg = '**{}** successes!'.format(success_counter)
-        # return success_msg
-
-
-            
         
+def main():
+    for i in range(5):
+        roll = DiceRollClass(5, 10, None, 10, 8)
+        # print(roll.roll_dice(), roll.successes, roll.total)
+        roll.roll_dice()
+        print(roll.explode_dice(), roll.success_counter())
+        # print(roll.formated_results)
+        print(roll.output())
+        print()
+
+if __name__ == '__main__':
+    main()
+
+
+
+
+
+
+
 def dice_input_verification(input_command, mode = 'wod'):
     '''
     checks the input command, roll_match checks dice roll input
@@ -104,16 +129,3 @@ def dice_input_verification(input_command, mode = 'wod'):
 
     else:
         raise dexc.RollInputError
-
-
-def main():
-    for i in range(5):
-        roll = RollClass(10, 10, 0, 10, 8)
-        # print(roll.roll_dice(), roll.successes, roll.total)
-        print(roll.roll_dice())
-        print(roll.explode_dice(), roll.successes)
-        print(roll.formated_results)
-        print()
-
-if __name__ == '__main__':
-    main()
