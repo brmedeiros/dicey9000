@@ -18,9 +18,10 @@ class DiceRollClass():
         self.formated_results = []
                 
     def roll_dice(self):
-        self.results = [random.randint(1, self.dice_type) for i in range(self.number_of_dice)]
-        self.formated_results = ['{}'.format(result) for result in self.results]
-        return self.results
+        if self.number_of_dice != None:
+            self.results = [random.randint(1, self.dice_type) for i in range(self.number_of_dice)]
+            self.formated_results = ['{}'.format(result) for result in self.results]
+            return self.results
     
     @property
     def total(self):
@@ -54,31 +55,14 @@ class DiceRollClass():
             elif self.successes > 1:
                 success_msg = '\n**{}** successes!'.format(self.successes)
         if self.roll_modifier != None:
-            if self.roll_modifier >= 0:
+            if self.roll_modifier > 0:
                 return ' + '.join(self.formated_results) + ' + {} = {}'.format(self.roll_modifier, self.total) + success_msg
-            else:
+            elif self.roll_modifier < 0:
                 return ' + '.join(self.formated_results) + ' + ({}) = {}'.format(self.roll_modifier, self.total) + success_msg
+            else:
+                return ' + '.join(self.formated_results) + ' = {}'.format(self.total) + success_msg
         else:
             return '  '.join(self.formated_results) + success_msg
-
-        
-def main():
-    for i in range(5):
-        roll = DiceRollClass(5, 10, None, 10, 8)
-        # print(roll.roll_dice(), roll.successes, roll.total)
-        roll.roll_dice()
-        print(roll.explode_dice(), roll.success_counter())
-        # print(roll.formated_results)
-        print(roll.output())
-        print()
-
-if __name__ == '__main__':
-    main()
-
-
-
-
-
 
 
 def dice_input_verification(input_command, mode = 'wod'):
@@ -87,22 +71,31 @@ def dice_input_verification(input_command, mode = 'wod'):
     options_match checks help and default mode (!r n) settings input
     '''
     roll_match = re.match(r'!r (?P<number_of_dice>\d+)(d(?P<dice_type>\d+))?'
+                          r'((?P<total>\+)(?P<add_mod>\d+)?|(-(?P<sub_mod>\d+)))?'
                           r'(x(?P<explode_value>\d+))?(\?(?P<success_condition>\d+))?$', input_command)
 
     option_match = re.match(r'!r ((?P<help>help)|(set (?P<mode>wod|simple)))$', input_command)
 
-    explode_value, success_condition = 0, 0
+    modifier, explode_value, success_condition = None, None, None
 
     if roll_match:
         number_of_dice = int(roll_match.group('number_of_dice'))
 
         if not roll_match.group('dice_type'):
             if mode == 'wod':
-                return number_of_dice, 10, 10, 8, 'wod', None
+                return number_of_dice, 10, None, 10, 8, 'wod', None
             if mode == 'simple':
-                return number_of_dice, 6, 0, 0, 'simple', None
+                return number_of_dice, 6, 0, None, None, 'simple', None
         else:
             dice_type = int(roll_match.group('dice_type'))
+
+            if roll_match.group('add_mod'):
+                modifier = int(roll_match.group('add_mod'))
+            elif roll_match.group('sub_mod'):
+                modifier = -int(roll_match.group('sub_mod'))
+            elif roll_match.group('total'):
+                modifier = 0
+
             if roll_match.group('explode_value'):
                 explode_value = int(roll_match.group('explode_value'))
                 if explode_value > dice_type:
@@ -114,18 +107,71 @@ def dice_input_verification(input_command, mode = 'wod'):
                 if success_condition > dice_type:
                     raise dexc.SuccessConditionError
 
-        return number_of_dice, dice_type, explode_value, success_condition, mode, None
+        return number_of_dice, dice_type, modifier, explode_value, success_condition, mode, None
 
     elif option_match:
         if option_match.group('help'):
             cmd_msg = 'Find all available commands at:\nhttps://github.com/brmedeiros/dicey9000/blob/master/README.md'
-            return 0, 0, 0, 0, mode, cmd_msg
+            return None, None, None, None, None, mode, cmd_msg
         if option_match.group('mode') == 'wod':
             cmd_msg = 'Default mode (!r n) set to World of Darksness (WoD)'
-            return 0, 0, 0, 0, 'wod', cmd_msg
+            return None, None, None, None, None, 'wod', cmd_msg
         if option_match.group('mode') == 'simple':
             cmd_msg = 'Default mode (!r n) set to simple (nd6)'
-            return 0, 0, 0, 0, 'simple', cmd_msg
+            return None, None, None, None, None, 'simple', cmd_msg
 
     else:
         raise dexc.RollInputError
+
+
+def main():
+    try:
+        while True:
+            try:
+                will_roll = True
+                n, d, m, x, s, dcfg.mode, msg = dice_input_verification(input('Type the roll you want to make...\n'),
+                                                                        dcfg.mode)
+                while msg != None:
+                    print(msg)
+                    n, d, m, x, s, dcfg.mode, msg = dice_input_verification(input('Ready...\n'), dcfg.mode)
+
+            except (dexc.SuccessConditionError, dexc.ExplodingDiceError,
+                    dexc.ExplodingDiceTooSmallError, dexc.RollInputError) as ex:
+                print(dexc.dice_exception_msg(ex, ex.msg))
+                will_roll = False
+
+            if will_roll == True:
+                my_roll = DiceRollClass(n, d, m, x, s)
+                my_roll.roll_dice()
+                my_roll.explode_dice()
+                my_roll.success_counter()
+                print(my_roll.output())
+
+    except KeyboardInterrupt:
+        print('\nbye!')
+
+
+
+    #dice_input_verification(input('Type the roll you want to make...\n'), dcfg.mode)
+    #dice_input_verification(input('Type the roll you want to make...\n'), 'simple')
+
+
+    # for i in range(5):
+    #     roll = DiceRollClass(None, None, None, None, None)
+    #     # print(roll.roll_dice(), roll.successes, roll.total)
+    #     roll.roll_dice()
+    #     print(roll.explode_dice(), roll.success_counter())
+    #     # print(roll.formated_results)
+    #     print(roll.output())
+    #     print()
+
+if __name__ == '__main__':
+    main()
+
+
+
+
+
+
+
+
