@@ -14,33 +14,21 @@ class RollClass():
         self.explode_value = explode_value
         self.success_condition = success_condition
         self.results = []
-
+        
     def roll_dice(self):
         self.results = []
         self.results = [random.randint(1, self.dice_type) for i in range(self.number_of_dice)]
-        # for i in range(self.number_of_dice):
-        #     result = random.randint(1, self.dice_type)
-        #     self.results.append(result)
         return self.results
     
     @property
     def total(self):
-        total = 0
-        for result in self.results:
-            total += result
-        total += self.roll_modifier
-        return total
-
+        return sum(self.results) + self.roll_modifier
+   
     def explode_dice(self):
-        pass
-        # if self.explode_value > 0:
-        # for result in self.results:
-        #    if result >= self.explode_value:
-        #        exploded = random.randint(1, self.dice_type)
-        #        insertion = [exploded for i in range(self.number_of_dice)]
-        #        [[i:] + [newelement] + mylist[:i] for i in xrange(len(mylist),-1,-1)]
-        #         result = random.randint(1, self.dice_type)
-        #         self.results.append(result)
+        for i, result in enumerate(self.results):
+            if self.results[i] >= self.explode_value:
+                self.results[i+1:i+1] = [random.randint(1, self.dice_type)]
+        return self.results
 
     @property
     def successes(self):
@@ -49,6 +37,8 @@ class RollClass():
             if result >= self.success_condition:
                 success_counter += 1
         return success_counter
+
+
 
 def count_resuts_success(results_list, success_condition):
     '''counts the number of successes and informs the user about it'''
@@ -131,8 +121,11 @@ def dice_input_verification(input_command, mode = 'wod'):
 
 def main():
     for i in range(5):
-        roll = RollClass(10, 10, 0, 10, 8)
+        roll = RollClass(6, 10, 0, 10, 8)
+        # print(roll.roll_dice(), roll.successes, roll.total)
         print(roll.roll_dice(), roll.successes, roll.total)
+        print(roll.explode_dice(), roll.successes, roll.total)
+        print()
 
 if __name__ == '__main__':
     main()
