@@ -14,10 +14,12 @@ class RollClass():
         self.explode_value = explode_value
         self.success_condition = success_condition
         self.results = []
+        self.formated_results = []
+        self.output = ''
         
     def roll_dice(self):
-        self.results = []
         self.results = [random.randint(1, self.dice_type) for i in range(self.number_of_dice)]
+        self.formated_results = ['{}'.format(result) for result in self.results]
         return self.results
     
     @property
@@ -26,47 +28,32 @@ class RollClass():
    
     def explode_dice(self):
         for i, result in enumerate(self.results):
-            if self.results[i] >= self.explode_value:
+            if result >= self.explode_value:
                 self.results[i+1:i+1] = [random.randint(1, self.dice_type)]
+                self.formated_results[i+1:i+1] = ['x.{}'.format(self.results[i+1])]
         return self.results
 
     @property
     def successes(self):
         success_counter = 0
-        for result in self.results:
+        for i, result in enumerate(self.results):
             if result >= self.success_condition:
                 success_counter += 1
+                self.formated_results[i] = '**{}**'.format(self.formated_results[i])
         return success_counter
 
 
 
-def count_resuts_success(results_list, success_condition):
-    '''counts the number of successes and informs the user about it'''
-    if success_condition > 0:
-        success_counter = 0
-        for single_result in results_list:
-            if single_result >= success_condition:
-                success_counter += 1
 
-        if success_counter == 0:
-            success_msg = 'Failure...'
-        elif success_counter == 1:
-            success_msg = '**1** success!'
-        elif success_counter > 1:
-            success_msg = '**{}** successes!'.format(success_counter)
-        return success_msg
+        # if success_counter == 0:
+        #     success_msg = 'Failure...'
+        # elif success_counter == 1:
+        #     success_msg = '**1** success!'
+        # elif success_counter > 1:
+        #     success_msg = '**{}** successes!'.format(success_counter)
+        # return success_msg
 
-def dice_roll(number_of_dice, dice_type = 10, explode = 0, success_condition = 0):
-    '''rolls the dice... results are saved if success_condition > 0'''
-    results = []
-    formated_results = []
-    for i in range(number_of_dice):
-        result = random.randint(1,dice_type)
-        results_recorder(results, result, formated_results, success_condition)
-        exploding_dice_check(explode, dice_type, results, result, formated_results, success_condition)
 
-    success_msg = count_resuts_success(results, success_condition)
-    return formated_results, success_msg
             
         
 def dice_input_verification(input_command, mode = 'wod'):
@@ -121,10 +108,11 @@ def dice_input_verification(input_command, mode = 'wod'):
 
 def main():
     for i in range(5):
-        roll = RollClass(6, 10, 0, 10, 8)
+        roll = RollClass(10, 10, 0, 10, 8)
         # print(roll.roll_dice(), roll.successes, roll.total)
-        print(roll.roll_dice(), roll.successes, roll.total)
-        print(roll.explode_dice(), roll.successes, roll.total)
+        print(roll.roll_dice())
+        print(roll.explode_dice(), roll.successes)
+        print(roll.formated_results)
         print()
 
 if __name__ == '__main__':
