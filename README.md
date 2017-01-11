@@ -1,6 +1,6 @@
 # dicey9000
 
-*v1.4*
+*v2.0*
 
 dicey9000 is a bot for discord that makes dice rolls.
 It takes commands from users messages starting with `!r`
@@ -9,15 +9,15 @@ It takes commands from users messages starting with `!r`
 
 Activate the default roll mode by typing
 
-   `!r n`
+  `!r n`
 
-where `n` is the number of dices to be rolled.
+where `n` is the number of dice to be rolled.
 
 #### Choose default mode
 
 You can choose the default roll mode by typing
 
-   `!r set mode_name`
+  `!r set mode_name`
 
 There are currently two possible `mode_name` choices:
 
@@ -25,30 +25,36 @@ There are currently two possible `mode_name` choices:
 
 World of Darkness (WoD) (chosen by default)
 
-Uses the WoD rules to count successes and explode dices. A successes
-happens if the dice scores 7 of higher. A dice explodes (gets rolled
-again) if its result is equal to 10. A result list is printed and the
-number of successes is shown.
+Uses the WoD rules to count successes and explode dice. A success
+happens if a die scores 7 of higher. A die explodes (is rolled again)
+if its result is equal to 10. A result list is printed and the number
+of successes is shown.
 
 - `simple`
 
-Rolls n 6 sided dices and a list of the results are shown.
+Rolls n 6 sided dice and adds the results.
 
-#### Arbitrary roll 
+#### Arbitrary roll
 
 An arbitrary roll can be made with the following syntax:
-   
-   `!r (number_of_dices)d(dice_type)x(explode_value)?(success_condition)`
-   	
-  * All entries should be greater than 0. 
-  * If the dice result is equal or greater than the explode_value it gets
-    rolled again.
-  * If the dice result is equal or greater than the success_condition a
+
+  `!r (number_of_dice)d(dice_type)+(roll_modifier)x(explode_value)?(success_condition)`
+
+  * All entries should be greater than 0.
+  * If roll_modifier is present, the results are added and modified
+    by roll_modifier.
+    - A negative modfier can be applied to the roll by exchanging '+' with '-'.
+    - Alternatively, if only '+' is present (without a roll_modifier value)
+      the results will be added with no modidier.
+  * If the roll result is equal or greater than the explode_value, the
+    die is rolled again.
+  * If the roll result is equal or greater than the success_condition, a
     success is added to the total number of successes.
-  * Both x(explode_value) and ?(success_condition) are optional.
+  * All x(explode_value), +(roll_modifier) and ?(success_condition)
+    are optional.
 
 #### Help
 
 Get the link to this page by typing
 
-   `!r help`
+  `!r help`
