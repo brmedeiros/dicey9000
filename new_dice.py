@@ -88,6 +88,8 @@ def dice_input_verification(input_command, mode = 'wod'):
                 return number_of_dice, 6, 0, None, None, 'simple', None
         else:
             dice_type = int(roll_match.group('dice_type'))
+            if dice_type == 0:
+                raise dexc.DiceTypeError
 
             if roll_match.group('add_mod'):
                 modifier = int(roll_match.group('add_mod'))
@@ -129,13 +131,13 @@ def main():
         while True:
             try:
                 will_roll = True
-                n, d, m, x, s, dcfg.mode, msg = dice_input_verification(input('Type the roll you want to make...\n'),
+                n, d, m, x, s, dcfg.mode, msg = dice_input_verification(input('\nType the roll you want to make...\n'),
                                                                         dcfg.mode)
                 while msg != None:
                     print(msg)
                     n, d, m, x, s, dcfg.mode, msg = dice_input_verification(input('Ready...\n'), dcfg.mode)
 
-            except (dexc.SuccessConditionError, dexc.ExplodingDiceError,
+            except (dexc.SuccessConditionError, dexc.ExplodingDiceError, dexc.DiceTypeError,
                     dexc.ExplodingDiceTooSmallError, dexc.RollInputError) as ex:
                 print(dexc.dice_exception_msg(ex, ex.msg))
                 will_roll = False

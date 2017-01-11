@@ -50,8 +50,8 @@ An arbitrary roll can be made with the following syntax:
     die is rolled again.
   * If the roll result is equal or greater than the success_condition, a
     success is added to the total number of successes.
-  * All x(explode_value), +(roll_modifier) and ?(success_condition)
-    are optional.
+  * x(explode_value), +(roll_modifier) and ?(success_condition)
+    are optional entries.
 
 #### Help
 

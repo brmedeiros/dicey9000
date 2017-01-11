@@ -1,99 +1,96 @@
 import unittest
 import unittest.mock
-import dice
+import new_dice
 import dice_config as dcfg
 import dice_exceptions as dexc
 
 class DiceInputVerificationTest(unittest.TestCase):
     def test_dice_roll_input_wod(self):
-        examples = {'!r 5':[5, 10, 10, 8, 'wod', None],
-                    '!r 2000':[2000, 10, 10, 8, 'wod', None],
-                    '!r 2d8':[2, 8, 0, 0, 'wod', None],
-                    '!r 7d6x4':[7, 6, 4, 0, 'wod', None],
-                    '!r 5000d700x700':[5000, 700, 700, 0, 'wod', None],
-                    '!r 15d20?20':[15, 20, 0, 20, 'wod', None],
-                    '!r 39d10x5?8':[39, 10, 5, 8, 'wod', None],
-                    '!r 1d4x4?4':[1, 4, 4, 4, 'wod', None]}
+        examples = {'!r 5':[5, 10, None, 10, 8, 'wod', None],
+                    '!r 2000':[2000, 10, None, 10, 8, 'wod', None],
+                    '!r 2d8':[2, 8, None, None, None, 'wod', None],
+                    '!r 7d6x4':[7, 6, None, 4, None, 'wod', None],
+                    '!r 5000d700x700':[5000, 700, None, 700, None, 'wod', None],
+                    '!r 15d20?20':[15, 20, None, None, 20, 'wod', None],
+                    '!r 39d10x5?8':[39, 10, None, 5, 8, 'wod', None],
+                    '!r 1d4x4?4':[1, 4, None, 4, 4, 'wod', None],
+                    '!r 6d6+':[6, 6, 0, None, None, 'wod', None],
+                    '!r 5d32+5':[5, 32, 5, None, None, 'wod', None],
+                    '!r 17d4-12':[17, 4, -12, None, None, 'wod', None],
+                    '!r 3d12+x12':[3, 12, 0, 12, None, 'wod', None],
+                    '!r 10d20-7?15':[10, 20, -7, None, 15, 'wod', None],
+                    '!r 768d37+33x5?23':[768, 37, 33, 5, 23, 'wod', None]}
         for example, value in examples.items():
-            n, d, x, s, mode, cmd_msg  = dice.dice_input_verification(example)
-            self.assertEqual([n, d, x, s, mode, cmd_msg], value)
+            n, d, m, x, s, mode, cmd_msg  = new_dice.dice_input_verification(example)
+            self.assertEqual([n, d, m, x, s, mode, cmd_msg], value)
 
     def test_dice_roll_input_simple(self):
-        examples = {'!r 7':[7, 6, 0, 0, 'simple', None],
-                    '!r 2000':[2000, 6, 0, 0, 'simple', None],
-                    '!r 2d8':[2, 8, 0, 0, 'simple', None],
-                    '!r 7d6x4':[7, 6, 4, 0, 'simple', None],
-                    '!r 8000d899x899':[8000, 899, 899, 0, 'simple', None],
-                    '!r 15d20?20':[15, 20, 0, 20, 'simple', None],
-                    '!r 39d10x5?8':[39, 10, 5, 8, 'simple', None],
-                    '!r 1d4x4?4':[1, 4, 4, 4, 'simple', None]}
+        examples = {'!r 7':[7, 6, 0, None, None, 'simple', None],
+                    '!r 2000':[2000, 6, 0, None, None, 'simple', None],
+                    '!r 2d8':[2, 8, None, None, None, 'simple', None],
+                    '!r 7d6x4':[7, 6, None, 4, None, 'simple', None],
+                    '!r 8000d899x899':[8000, 899, None, 899, None, 'simple', None],
+                    '!r 15d20?20':[15, 20, None, None, 20, 'simple', None],
+                    '!r 39d10x5?8':[39, 10, None, 5, 8, 'simple', None],
+                    '!r 1d4x4?4':[1, 4, None, 4, 4, 'simple', None],
+                    '!r 6d6+':[6, 6, 0, None, None, 'simple', None],
+                    '!r 5d32+5':[5, 32, 5, None, None, 'simple', None],
+                    '!r 17d4-12':[17, 4, -12, None, None, 'simple', None],
+                    '!r 3d12+x12':[3, 12, 0, 12, None, 'simple', None],
+                    '!r 10d20-7?15':[10, 20, -7, None, 15, 'simple', None],
+                    '!r 768d37+33x5?23':[768, 37, 33, 5, 23, 'simple', None]}
         for example, value in examples.items():
-             n, d, x, s, mode, cmd_msg = dice.dice_input_verification(example, 'simple')
-             self.assertEqual([n, d, x, s, mode, cmd_msg], value)
+             n, d, m, x, s, mode, cmd_msg = new_dice.dice_input_verification(example, 'simple')
+             self.assertEqual([n, d, m, x, s, mode, cmd_msg], value)
 
     def test_dice_options_help(self):
-        examples = {'!r help': [0, 0, 0, 0, dcfg.mode, 'Find all available commands at:'
+        examples = {'!r help': [None, None, None, None, None, dcfg.mode, 'Find all available commands at:'
                                 '\nhttps://github.com/brmedeiros/dicey9000/blob/master/README.md']}
         for example, value in examples.items():
-            n, d, x, s, mode, cmd_msg  = dice.dice_input_verification(example, dcfg.mode)
-            self.assertEqual([n, d, x, s, mode, cmd_msg], value)
+            n, d, m, x, s, mode, cmd_msg  = new_dice.dice_input_verification(example, dcfg.mode)
+            self.assertEqual([n, d, m, x, s, mode, cmd_msg], value)
 
     def test_dice_options_mode(self):
-        examples = {'!r set wod': [0, 0, 0, 0, 'wod', 'Default mode (!r n) set to World of Darksness (WoD)'],
-                    '!r set simple': [0, 0, 0, 0, 'simple', 'Default mode (!r n) set to simple (nd6)']}
+        examples = {'!r set wod': [None, None, None, None, None,
+                                   'wod', 'Default mode (!r n) set to World of Darksness (WoD)'],
+                    '!r set simple': [None, None, None, None, None,
+                                      'simple', 'Default mode (!r n) set to simple (nd6)']}
         for dmode in ['wod', 'simple']:
             for example, value in examples.items():
-                n, d, x, s, mode, cmd_msg  = dice.dice_input_verification(example, dmode)
-                self.assertEqual([n, d, x, s, mode, cmd_msg], value)
+                n, d, m, x, s, mode, cmd_msg  = new_dice.dice_input_verification(example, dmode)
+                self.assertEqual([n, d, m, x, s, mode, cmd_msg], value)
 
     def test_dice_input_exception(self):
         examples = ['!r ', '!r dmeoamdef', '!r kelf laij', '!r 2 3', '!r 6dz','!r 30dx', '!r 5d7x7?', '!r 9d10?',
                     '!r -10', '!r -6d8', '!r 6d8x?10', '!r 12d12x18?', '!r set ', '!r set help', '!r set akneoi',
-                    '!r 3d6 help', '!r set 6d8?4 wod']
+                    '!r 3d6 help', '!r set 6d8?4 wod', '!r 6d12-', '!r 8d4-45?+', '!r 12d6+8-9', '!r 8d20-923+1x10?15']
         for mode in ['wod', 'simple']:
             for example in examples:
-                self.assertRaises(dexc.RollInputError, dice.dice_input_verification, example, mode)
+                self.assertRaises(dexc.RollInputError, new_dice.dice_input_verification, example, mode)
 
     def test_eploding_dice_exception(self):
-        examples = ['!r 5d8x9', '!r 12d60x100', '!r 1d6x9?4']
+        examples = ['!r 5d8x9', '!r 12d60x100', '!r 1d6x9?4', '!r 78d5+x43', '!r 6d12-10x15', '!r 8d20+1x22?20']
         for mode in ['wod', 'simple']:
             for example in examples:
-                self.assertRaises(dexc.ExplodingDiceError, dice.dice_input_verification, example, mode)
+                self.assertRaises(dexc.ExplodingDiceError, new_dice.dice_input_verification, example, mode)
 
     def test_eploding_dice_too_small_exception(self):
-        examples = ['!r 5d8x1', '!r 8d6x2', '!r 3d70x1?10', '!r 10d2x2?2']
+        examples = ['!r 5d8x1', '!r 8d6x2', '!r 3d70x1?10', '!r 10d2x2?2', '!r 78d5+x2', '!r 6d12-10x1',
+                    '!r 8d20+1x2?20']
         for mode in ['wod', 'simple']:
             for example in examples:
-                self.assertRaises(dexc.ExplodingDiceTooSmallError, dice.dice_input_verification, example, mode)
+                self.assertRaises(dexc.ExplodingDiceTooSmallError, new_dice.dice_input_verification, example, mode)
 
     def test_success_condition_exception(self):
-        examples = ['!r 2d8?9', '!r 2d15?55', '!r 65d10x6?11', '!r 32d5x5?100']
+        examples = ['!r 2d8?9', '!r 2d15?55', '!r 65d10x6?11', '!r 32d5x5?100', '!r 78d5+?6', '!r 6d12-10?45',
+                    '!r 8d20+1x18?200']
         for mode in ['wod', 'simple']:
             for example in examples:
-                self.assertRaises(dexc.SuccessConditionError, dice.dice_input_verification, example, mode)
+                self.assertRaises(dexc.SuccessConditionError, new_dice.dice_input_verification, example, mode)
 
-class ResultsRecorderTest(unittest.TestCase):
-    def test_results_recorder(self):
-        examples = [
-            [[7, 12, 1, 6, 10, 25, 555, 2], 10, ['7', '**12**', '1', '6', '**10**', '**25**', '**555**', '2'], False],
-            [[2, 5, 87, 6, 4, 65], 50, ['2', '5', '**87**', '6', '4', '**65**'], False],
-            [[6, 8, 9, 1, 1, 2], 0, ['x.6', 'x.8', 'x.9', 'x.1', 'x.1', 'x.2'], True],
-            [[6, 8, 9, 1, 1, 2], 5, ['x.**6**', 'x.**8**', 'x.**9**', 'x.1', 'x.1', 'x.2'], True]
-        ]
-        for example in examples:
-            list1, list2 = [], []
-            for result in example[0]:
-                dice.results_recorder(list1, result, list2, example[1], example[3])
-            self.assertEqual([list1, list2], [example[0], example[2]])
-
-# class ExplodingDiceCheckTest(unittest.TestCase):
-#     @unittest.mock.patch('random.randint')
-#     def test_exploding_dice_check(self, randint_call):
-#         randint_call.return_value = 7 
-#         examples = [
-#             [6, 12, [0], [6], ['0'], 8], 
-#         ]
-#         for example in examples:
-#             for result in example[3]:
-#                 dice.exploding_dice_check(example[0], example[1], example[2], result, example[4], list1, example[5])
-#                 self.assertEqual(list1, example[4])
+    def test_dice_type_exception(self):
+        examples = ['!r 2d0', '!r 50d0?55', '!r 6d0x6?11', '!r 32d0x5?100', '!r 78d0+?6', '!r 6d0-10?45',
+                    '!r 8d0+1x18?200']
+        for mode in ['wod', 'simple']:
+            for example in examples:
+                self.assertRaises(dexc.DiceTypeError, new_dice.dice_input_verification, example, mode)

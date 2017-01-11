@@ -18,6 +18,11 @@ class ExplodingDiceTooSmallError(Exception):
     def __init__(self):
         self.msg = 'Exploding value should be greater than 2.'
 
+class DiceTypeError(Exception):
+    '''raised if a zero-sided die is chosen by the user'''
+    def __init__(self):
+        self.msg = 'Dice type should be greater than 0.'
+
 def dice_exception_msg(exception, exception_msg):
     '''returns the exception message'''
     msg_string = 'An exception of type {0} occurred.\n------\n{1}'.format(type(exception).__name__, exception_msg)

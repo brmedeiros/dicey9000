@@ -48,7 +48,7 @@ def main():
                     yield from client.send_message(message.channel, cmd_msg)
                     will_roll = False
 
-            except (dexc.SuccessConditionError, dexc.ExplodingDiceError,
+            except (dexc.SuccessConditionError, dexc.ExplodingDiceError, dexc.DiceTypeError,
                     dexc.ExplodingDiceTooSmallError, dexc.RollInputError) as ex:
                 yield from client.send_message(message.channel, dexc.dice_exception_msg(ex, ex.msg))
                 will_roll = False
