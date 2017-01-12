@@ -26,7 +26,7 @@ There are currently two possible `mode_name` choices:
 World of Darkness (WoD) (chosen by default)
 
 Rolls n 10 sided dice and uses the WoD rules to count successes and
-explode dice. A success happens if a die scores 8 of higher. A die
+explode dice. A success happens if a die scores 8 or higher. A die
 explodes (is rolled again) if its result is equal to 10. A result list
 is printed and the number of successes is shown.
 
