@@ -63,7 +63,8 @@ class DiceInputVerificationTest(unittest.TestCase):
     def test_dice_input_exception(self):
         examples = ['!r ', '!r dmeoamdef', '!r kelf laij', '!r 2 3', '!r 6dz','!r 30dx', '!r 5d7x7?', '!r 9d10?',
                     '!r -10', '!r -6d8', '!r 6d8x?10', '!r 12d12x18?', '!r set ', '!r set help', '!r set akneoi',
-                    '!r 3d6 help', '!r set 6d8?4 wod', '!r 6d12-', '!r 8d4-45?+', '!r 12d6+8-9', '!r 8d20-923+1x10?15']
+                    '!r 3d6 help', '!r set 6d8?4 wod', '!r 6d12-', '!r 8d4-45?+', '!r 12d6+8-9', '!r 8d20-923+1x10?15'
+                    '!r 5+2', '!r 12-3', '!r 20x4', '!r 25?12', '!r 2+7x4?4']
         for mode in ['wod', 'simple']:
             for example in examples:
                 self.assertRaises(dexc.RollInputError, dice.dice_input_verification, example, mode)

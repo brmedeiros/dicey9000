@@ -74,7 +74,7 @@ def dice_input_verification(input_command, mode = 'wod'):
                           r'((?P<total>\+)(?P<add_mod>\d+)?|(-(?P<sub_mod>\d+)))?'
                           r'(x(?P<explode_value>\d+))?(\?(?P<success_condition>\d+))?$', input_command)
 
-    option_match = re.match(r'!r ((?P<help>help)|(set (?P<mode>wod|simple)))$', input_command)
+    option_match = re.match(r'!r ((?P<help>help)|(set (?P<mode>wod|simple))|(?P<status>status))$', input_command)
 
     modifier, explode_value, success_condition = None, None, None
 
@@ -121,7 +121,9 @@ def dice_input_verification(input_command, mode = 'wod'):
         if option_match.group('mode') == 'simple':
             cmd_msg = 'Default mode (!r n) set to simple (nd6)'
             return None, None, None, None, None, 'simple', cmd_msg
-
+        if option_match.group('status'):
+            cmd_msg = 'Default mode is currently {}.'.format(dcfg.mode)
+            return None, None, None, None, None, mode, cmd_msg
     else:
         raise dexc.RollInputError
 

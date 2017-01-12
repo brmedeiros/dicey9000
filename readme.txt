@@ -1,6 +1,6 @@
 # dicey9000
 
-*v2.0*
+*v2.1*
 
 dicey9000 is a bot for discord that makes dice rolls.
 It takes commands from users messages starting with `!r`
