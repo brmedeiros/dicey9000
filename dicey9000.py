@@ -58,7 +58,7 @@ def main():
                 my_roll.roll_dice()
                 my_roll.explode_dice()
                 my_roll.success_counter()
-                yield from client.send_message(message.channel, my_roll.output())                
+                yield from client.send_message(message.channel, my_roll.output())
 
     token = os.environ['DICEY9000_TOKEN']
     client.run(token)
