@@ -80,24 +80,22 @@ def dice_input_verification(input_command, mode = 'wod'):
 
     if roll_match:
         number_of_dice = int(roll_match.group('number_of_dice'))
-
-        if not roll_match.group('dice_type'):
+        if not any(roll_match.group('dice_type', 'total', 'sub_mod', 'explode_value', 'success_condition')):
             if mode == 'wod':
                 return number_of_dice, 10, None, 10, 8, 'wod', None
             if mode == 'simple':
                 return number_of_dice, 6, 0, None, None, 'simple', None
-        else:
+
+        elif roll_match.group('dice_type'):
             dice_type = int(roll_match.group('dice_type'))
             if dice_type == 0:
                 raise dexc.DiceTypeError
-
             if roll_match.group('add_mod'):
                 modifier = int(roll_match.group('add_mod'))
             elif roll_match.group('sub_mod'):
                 modifier = -int(roll_match.group('sub_mod'))
             elif roll_match.group('total'):
                 modifier = 0
-
             if roll_match.group('explode_value'):
                 explode_value = int(roll_match.group('explode_value'))
                 if explode_value > dice_type:
@@ -108,7 +106,8 @@ def dice_input_verification(input_command, mode = 'wod'):
                 success_condition = int(roll_match.group('success_condition'))
                 if success_condition > dice_type:
                     raise dexc.SuccessConditionError
-
+        else:
+            raise dexc.RollInputError
         return number_of_dice, dice_type, modifier, explode_value, success_condition, mode, None
 
     elif option_match:

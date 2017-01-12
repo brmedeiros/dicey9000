@@ -34,6 +34,12 @@ of successes is shown.
 
 Rolls n 6 sided dice and adds the results.
 
+#### Check default mode
+
+You can check which mode is currently active by typing
+
+  `!r status`
+
 #### Arbitrary roll
 
 An arbitrary roll can be made with the following syntax:
