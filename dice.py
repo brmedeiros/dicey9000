@@ -14,9 +14,7 @@ class DiceRoll():
         self.explode_value = explode_value
         self.success_condition = success_condition
         self.successes = 0
-        self.results = []
-        self.formated_results = []
-
+       
     def roll_dice(self):
         if self.number_of_dice != None:
             self.results = [random.randint(1, self.dice_type) for i in range(self.number_of_dice)]
