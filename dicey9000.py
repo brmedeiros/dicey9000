@@ -6,6 +6,7 @@ import asyncio
 import random
 import datetime as dt
 import dice
+import dicey9000info as info
 import dice_config as dcfg
 import dice_exceptions as dexc
 import aux_functions as auxf
@@ -59,8 +60,10 @@ def main():
                 my_roll.explode_dice()
                 my_roll.success_counter()
                 yield from client.send_message(message.channel, my_roll.output())
-
-    token = os.environ['DICEY9000_TOKEN']
+    try:
+        token = os.environ['DICEY9000_TOKEN']
+    except (KeyError):
+        token = info.DICEY9000_TOKEN
     client.run(token)
 
 if __name__ == '__main__':
