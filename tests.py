@@ -104,5 +104,6 @@ class DiceRollTest(unittest.TestCase):
         target = dice.DiceRoll(6, 6, None, None, None)
         target.roll_dice()
         self.assertEqual(6, len(target.results))
-        self.assertEqual(results, target.results)
-        self.assertEqual(1, target.results[0])
+        for i, result in enumerate(results):
+            self.assertEqual(result, target.results[i])
+            self.assertEqual(str(result), target.formated_results[i])
