@@ -99,11 +99,32 @@ class DiceInputVerificationTest(unittest.TestCase):
 class DiceRollTest(unittest.TestCase):
     @mock.patch('random.randint')
     def test_roll_dice(self, random_call):
-        results = [1, 4, 7, 8, 6, 9]
+        results = [1, 4, 6, 6, 2, 3, 5]
         random_call.side_effect = results
-        target = dice.DiceRoll(6, 6, None, None, None)
+        target = dice.DiceRoll(7, 6, None, None, None)
         target.roll_dice()
-        self.assertEqual(6, len(target.results))
+        self.assertEqual(7, target.number_of_dice)
+        self.assertEqual(7, len(target.results))
         for i, result in enumerate(results):
             self.assertEqual(result, target.results[i])
             self.assertEqual(str(result), target.formated_results[i])
+
+    @mock.patch('random.randint')
+    def test_total(self, random_call):
+        results = [1, 10, 5, 4, 10]
+        random_call.side_effect = results
+        examples = [0, 5, -10, 22, -50]
+        for example in examples:
+            target = dice.DiceRoll(5, 10, example, None, None)
+            target.roll_dice()
+            self.assertEqual(example, target.roll_modifier)
+            self.assertEqual(sum(results) + example, target.total)
+        
+    @mock.patch('random.randint')
+    def test_explode(self, random_call):
+        results = [1, 12, 5, 4, 7, 6]
+        random_call.side_effect = results
+        target = dice.DiceRoll(6, 12, None, 12, None)
+        target.roll_dice()
+        self.assertEqual(12, target.explode_value)
+        self.assertEqual(len(results)+1, len(target.results)) 
