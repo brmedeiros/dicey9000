@@ -17,7 +17,7 @@ class DiceRoll():
         self.successes = 0
         self.glitch_value = glitch_value
         self.glitches = 0
-       
+
     def roll_dice(self):
         if self.number_of_dice != None:
             self.results = [random.randint(1, self.dice_type) for i in range(self.number_of_dice)]
@@ -56,7 +56,7 @@ class DiceRoll():
             for result in self.results:
                 if result <= self.glitch_value:
                     self.glitches += 1
-        return self.glitches                    
+        return self.glitches
 
     def output(self):
         success_msg = ''

@@ -41,7 +41,7 @@ def main():
                   .format(dt.datetime.now(), message.channel, message.content))
             try:
                 will_roll = True
-                number_of_dice, dice_type, modifier, explode, success, dcfg.mode, cmd_msg\
+                number_of_dice, dice_type, modifier, explode, success, glitch, dcfg.mode, cmd_msg\
                 = dice.dice_input_verification(message.content, dcfg.mode)
 
                 if cmd_msg != None:
@@ -49,13 +49,14 @@ def main():
                     will_roll = False
 
             except (dexc.SuccessConditionError, dexc.ExplodingDiceError, dexc.DiceTypeError,
-                    dexc.ExplodingDiceTooSmallError, dexc.RollInputError) as ex:
+                    dexc.ExplodingDiceTooSmallError, dexc.GlitchValueError, dexc.RollInputError) as ex:
                 yield from client.send_message(message.channel, dexc.dice_exception_msg(ex, ex.msg))
                 will_roll = False
 
             if will_roll == True:
-                my_roll = dice.DiceRoll(number_of_dice, dice_type, modifier, explode, success)
+                my_roll = dice.DiceRoll(number_of_dice, dice_type, modifier, explode, success, glitch)
                 my_roll.roll_dice()
+                my_roll.glitch_counter()
                 my_roll.explode_dice()
                 my_roll.success_counter()
                 yield from client.send_message(message.channel, my_roll.output())
