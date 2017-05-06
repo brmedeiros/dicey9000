@@ -1,19 +1,22 @@
 #!/usr/bin/python3
 
 import re
+import math
 import random
 import dice_config as dcfg
 import dice_exceptions as dexc
 
 class DiceRoll():
 
-    def __init__(self, number_of_dice, dice_type, roll_modifier, explode_value, success_condition):
+    def __init__(self, number_of_dice, dice_type, roll_modifier, explode_value, success_condition, glitch_value):
         self.number_of_dice = number_of_dice
         self.dice_type = dice_type
         self.roll_modifier = roll_modifier
         self.explode_value = explode_value
         self.success_condition = success_condition
         self.successes = 0
+        self.glitch_value = glitch_value
+        self.glitches = 0
        
     def roll_dice(self):
         if self.number_of_dice != None:
@@ -43,8 +46,21 @@ class DiceRoll():
                     self.formated_results[i] = '**{}**'.format(self.formated_results[i])
         return self.successes
 
+    def glitch_counter(self):
+        '''
+        call .glitch_counter before .explode_dice if you want the
+        exploded dice to NOT add to self.glitches
+        '''
+        if self.glitch_value != None:
+            self.glitches = 0
+            for result in self.results:
+                if result <= self.glitch_value:
+                    self.glitches += 1
+        return self.glitches                    
+
     def output(self):
         success_msg = ''
+        glitch_msg = ''
         if self.success_condition != None:
             if self.successes == 0:
                 success_msg = '\nFailure...'
@@ -52,15 +68,22 @@ class DiceRoll():
                 success_msg = '\n**1** success!'
             elif self.successes > 1:
                 success_msg = '\n**{}** successes!'.format(self.successes)
+            if self.glitch_value != None:
+                if self.glitches >= math.ceil(self.number_of_dice/2) and self.successes == 0:
+                    glitch_msg = '\nCritical glitch! '+r'(╯°□°）╯︵ ┻━┻'
+                if self.glitches >= math.ceil(self.number_of_dice/2) and self.successes > 0:
+                    glitch_msg = '\nGlitch...'
         if self.roll_modifier != None:
             if self.roll_modifier > 0:
-                return ' + '.join(self.formated_results) + ' + {} = {}'.format(self.roll_modifier, self.total) + success_msg
+                return ' + '.join(self.formated_results) + ' + {} = {}'.format(self.roll_modifier, self.total)\
+                + success_msg + glitch_msg
             elif self.roll_modifier < 0:
-                return ' + '.join(self.formated_results) + ' + ({}) = {}'.format(self.roll_modifier, self.total) + success_msg
+                return ' + '.join(self.formated_results) + ' + ({}) = {}'.format(self.roll_modifier, self.total)\
+                + success_msg + glitch_msg
             else:
-                return ' + '.join(self.formated_results) + ' = {}'.format(self.total) + success_msg
+                return ' + '.join(self.formated_results) + ' = {}'.format(self.total) + success_msg + glitch_msg
         else:
-            return '  '.join(self.formated_results) + success_msg
+            return '  '.join(self.formated_results) + success_msg + glitch_msg
 
 
 def dice_input_verification(input_command, mode = 'wod'):
@@ -70,19 +93,23 @@ def dice_input_verification(input_command, mode = 'wod'):
     '''
     roll_match = re.match(r'!r (?P<number_of_dice>\d+)(d(?P<dice_type>\d+))?'
                           r'((?P<total>\+)(?P<add_mod>\d+)?|(-(?P<sub_mod>\d+)))?'
-                          r'(x(?P<explode_value>\d+))?(\?(?P<success_condition>\d+))?$', input_command)
+                          r'(x(?P<explode_value>\d+))?(\?(?P<success_condition>\d+))?'
+                          r'((?P<glitch>g)(?P<glitch_value>\d+)?)?$', input_command)
 
-    option_match = re.match(r'!r ((?P<help>help)|(set (?P<mode>wod|simple))|(?P<status>status))$', input_command)
+    option_match = re.match(r'!r ((?P<help>help)|(set (?P<mode>wod|simple|sr))|(?P<status>status))$', input_command)
 
-    modifier, explode_value, success_condition = None, None, None
+    modifier, explode_value, success_condition, glitch_value = None, None, None, None
 
     if roll_match:
         number_of_dice = int(roll_match.group('number_of_dice'))
-        if not any(roll_match.group('dice_type', 'total', 'sub_mod', 'explode_value', 'success_condition')):
+        if not any(roll_match.group('dice_type', 'total', 'sub_mod', 'explode_value', 'success_condition', 'glitch')):
             if mode == 'wod':
-                return number_of_dice, 10, None, 10, 8, 'wod', None
+                return number_of_dice, 10, None, 10, 8, None, 'wod', None
             if mode == 'simple':
-                return number_of_dice, 6, 0, None, None, 'simple', None
+                return number_of_dice, 6, 0, None, None, None, 'simple', None
+            if mode == 'sr':
+                return number_of_dice, 6, None, None, 5, 1, 'sr', None
+                # n, d, mod, ex, succ, glitch_value, mode, command msg
 
         elif roll_match.group('dice_type'):
             dice_type = int(roll_match.group('dice_type'))
@@ -104,23 +131,32 @@ def dice_input_verification(input_command, mode = 'wod'):
                 success_condition = int(roll_match.group('success_condition'))
                 if success_condition > dice_type:
                     raise dexc.SuccessConditionError
+            if roll_match.group('glitch_value'):
+                glitch_value = int(roll_match.group('glitch_value'))
+                if glitch_value == 0 or glitch_value > dice_type:
+                    raise dexc.GlitchValueError
+            elif roll_match.group('glitch'):
+                glitch_value = 1
         else:
             raise dexc.RollInputError
-        return number_of_dice, dice_type, modifier, explode_value, success_condition, mode, None
+        return number_of_dice, dice_type, modifier, explode_value, success_condition, glitch_value, mode, None
 
     elif option_match:
         if option_match.group('help'):
             cmd_msg = 'Find all available commands at:\nhttps://github.com/brmedeiros/dicey9000/blob/master/README.md'
-            return None, None, None, None, None, mode, cmd_msg
+            return None, None, None, None, None, None, mode, cmd_msg
         if option_match.group('mode') == 'wod':
             cmd_msg = 'Default mode (!r n) set to World of Darksness (WoD)'
-            return None, None, None, None, None, 'wod', cmd_msg
+            return None, None, None, None, None, None, 'wod', cmd_msg
         if option_match.group('mode') == 'simple':
             cmd_msg = 'Default mode (!r n) set to simple (nd6)'
-            return None, None, None, None, None, 'simple', cmd_msg
+            return None, None, None, None, None, None, 'simple', cmd_msg
+        if option_match.group('mode') == 'sr':
+            cmd_msg = 'Default mode (!r n) set to Shadorun (SR)'
+            return None, None, None, None, None, None, 'sr', cmd_msg
         if option_match.group('status'):
             cmd_msg = 'Default mode is currently {}.'.format(dcfg.mode)
-            return None, None, None, None, None, mode, cmd_msg
+            return None, None, None, None, None, None, mode, cmd_msg
     else:
         raise dexc.RollInputError
 
@@ -130,20 +166,21 @@ def main():
         while True:
             try:
                 will_roll = True
-                n, d, m, x, s, dcfg.mode, msg = dice_input_verification(input('\nType the roll you want to make...\n'),
-                                                                        dcfg.mode)
+                n, d, m, x, s, g, dcfg.mode, msg = dice_input_verification(input('\nType the roll you want to make...\n'),
+                                                                           dcfg.mode)
                 while msg != None:
                     print(msg)
-                    n, d, m, x, s, dcfg.mode, msg = dice_input_verification(input('Ready...\n'), dcfg.mode)
+                    n, d, m, x, s, g, dcfg.mode, msg = dice_input_verification(input('Ready...\n'), dcfg.mode)
 
             except (dexc.SuccessConditionError, dexc.ExplodingDiceError, dexc.DiceTypeError,
-                    dexc.ExplodingDiceTooSmallError, dexc.RollInputError) as ex:
+                    dexc.ExplodingDiceTooSmallError, dexc.GlitchValueError, dexc.RollInputError) as ex:
                 print(dexc.dice_exception_msg(ex, ex.msg))
                 will_roll = False
 
             if will_roll == True:
-                my_roll = DiceRoll(n, d, m, x, s)
+                my_roll = DiceRoll(n, d, m, x, s, g)
                 my_roll.roll_dice()
+                my_roll.glitch_counter()
                 my_roll.explode_dice()
                 my_roll.success_counter()
                 print(my_roll.output())

@@ -18,6 +18,11 @@ class ExplodingDiceTooSmallError(Exception):
     def __init__(self):
         self.msg = 'Exploding value should be greater than 2.'
 
+class GlitchValueError(Exception):
+    '''raised if the glitch value is greater than the dice size''' 
+    def __init__(self):
+        self.msg = 'Glitch value should be greater than 0 and less than dice size'
+
 class DiceTypeError(Exception):
     '''raised if a zero-sided die is chosen by the user'''
     def __init__(self):
