@@ -66,10 +66,12 @@ An arbitrary roll can be made with the following syntax:
     die is rolled again.
   * If the roll result is equal or greater than the success_condition, a
     success is added to the total number of successes.
-  * If the roll result is less or equal than the glitch_value the glitch counter
-    increases by one (see the Shadowrun mode above).
+  * If the number of successes is less or equal than the glitch_value
+    the glitch counter increases by one (see the Shadowrun mode above).
+    - If only 'g' is present (without a glitch_value) the glitch counter
+      increases by one if the die rolls a '1'.
   * x(explode_value), +(roll_modifier), ?(success_condition) and g(glitch_value)
-    are optional entries.
+    are optional entries. g and glitch_value require a success condition.
 
 #### Help
 

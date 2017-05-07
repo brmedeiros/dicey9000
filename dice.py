@@ -135,8 +135,12 @@ def dice_input_verification(input_command, mode = 'wod'):
                 glitch_value = int(roll_match.group('glitch_value'))
                 if glitch_value == 0 or glitch_value > dice_type:
                     raise dexc.GlitchValueError
+                if roll_match.group('glitch_value') and roll_match.group('success_condition') == None:
+                    raise dexc.NoSuccessForGlitchError
             elif roll_match.group('glitch'):
                 glitch_value = 1
+                if roll_match.group('glitch') and roll_match.group('success_condition') == None:
+                    raise dexc.NoSuccessForGlitchError
         else:
             raise dexc.RollInputError
         return number_of_dice, dice_type, modifier, explode_value, success_condition, glitch_value, mode, None
@@ -173,7 +177,8 @@ def main():
                     n, d, m, x, s, g, dcfg.mode, msg = dice_input_verification(input('Ready...\n'), dcfg.mode)
 
             except (dexc.SuccessConditionError, dexc.ExplodingDiceError, dexc.DiceTypeError,
-                    dexc.ExplodingDiceTooSmallError, dexc.GlitchValueError, dexc.RollInputError) as ex:
+                    dexc.ExplodingDiceTooSmallError, dexc.GlitchValueError,
+                    dexc.RollInputError, dexc.NoSuccessForGlitchError) as ex:
                 print(dexc.dice_exception_msg(ex, ex.msg))
                 will_roll = False
 

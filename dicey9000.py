@@ -49,7 +49,8 @@ def main():
                     will_roll = False
 
             except (dexc.SuccessConditionError, dexc.ExplodingDiceError, dexc.DiceTypeError,
-                    dexc.ExplodingDiceTooSmallError, dexc.GlitchValueError, dexc.RollInputError) as ex:
+                    dexc.ExplodingDiceTooSmallError, dexc.GlitchValueError,
+                    dexc.RollInputError, dexc.NoSuccessForGlitchError) as ex:
                 yield from client.send_message(message.channel, dexc.dice_exception_msg(ex, ex.msg))
                 will_roll = False
 
