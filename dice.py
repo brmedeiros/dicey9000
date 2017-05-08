@@ -99,7 +99,7 @@ def dice_input_verification(input_command, mode = 'wod'):
     option_match = re.match(r'!r ((?P<help>help)|(set (?P<mode>wod|simple|sr))|(?P<status>status))$', input_command)
 
     initiative_match = re.match(r'!r (((?P<init>init)( (?P<name>\w+))?( (?P<init_value>\d+))?)'
-                                r'|(?P<next>next))$', input_command)
+                                r'|(?P<next>next)|((?P<clear>clear)( (?P<clear_name>\w+))?))$', input_command)
 
     modifier, explode_value, success_condition, glitch_value = None, None, None, None
 
@@ -194,7 +194,22 @@ def dice_input_verification(input_command, mode = 'wod'):
                     cmd_msg += '{1:>2} {0} {2}\n'.format(item[0], item[1][0], item[1][1]) 
                 cmd_msg = '```{}```'.format(cmd_msg)
                 return None, None, None, None, None, None, mode, cmd_msg
-
+        
+        if initiative_match.group('clear'):
+            if initiative_match.group('clear_name'):
+                try:
+                    dcfg.initiatives.pop(initiative_match.group('clear_name'))
+                    dcfg.init_results.pop(initiative_match.group('clear_name'))
+                    cmd_msg = '{} removed from the initiative list'.format(initiative_match.group('clear_name'))
+                except(KeyError):
+                    cmd_msg = '{} is not in the initiative list'.format(initiative_match.group('clear_name'))
+                return None, None, None, None, None, None, mode, cmd_msg
+            else:
+                dcfg.initiatives.clear()
+                dcfg.init_results.clear()
+                cmd_msg = 'Initiative list cleared'
+                return None, None, None, None, None, None, mode, cmd_msg
+            
     else:
         raise dexc.RollInputError
 
