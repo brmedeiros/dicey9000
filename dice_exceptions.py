@@ -33,6 +33,16 @@ class DiceTypeError(Exception):
     def __init__(self):
         self.msg = 'Dice type should be greater than 0.'
 
+class InitiativeError(Exception):
+    '''raised if init is called without a name or init value'''
+    def __init__(self):
+        self.msg = 'A name and value is required.'
+
+class EmptyInitiativeListError(Exception):
+    '''raised if the initiatives dictionary is empty'''
+    def __init__(self):
+        self.msg = 'The initiative list is empty. Try "!r init name value" first.'
+
 def dice_exception_msg(exception, exception_msg):
     '''returns the exception message'''
     msg_string = 'An exception of type {0} occurred.\n------\n{1}'.format(type(exception).__name__, exception_msg)

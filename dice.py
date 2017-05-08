@@ -70,7 +70,7 @@ class DiceRoll():
                 success_msg = '\n**{}** successes!'.format(self.successes)
             if self.glitch_value != None:
                 if self.glitches >= math.ceil(self.number_of_dice/2) and self.successes == 0:
-                    glitch_msg = '\nCritical glitch! '+r'(╯°□°）╯︵ ┻━┻'
+                    glitch_msg = '\nCritical glitch! (╯°□°）╯︵ ┻━┻'
                 if self.glitches >= math.ceil(self.number_of_dice/2) and self.successes > 0:
                     glitch_msg = '\nGlitch...'
         if self.roll_modifier != None:
@@ -98,6 +98,9 @@ def dice_input_verification(input_command, mode = 'wod'):
 
     option_match = re.match(r'!r ((?P<help>help)|(set (?P<mode>wod|simple|sr))|(?P<status>status))$', input_command)
 
+    initiative_match = re.match(r'!r (((?P<init>init)( (?P<name>\w+))?( (?P<init_value>\d+))?)'
+                                r'|(?P<next>next))$', input_command)
+
     modifier, explode_value, success_condition, glitch_value = None, None, None, None
 
     if roll_match:
@@ -109,8 +112,7 @@ def dice_input_verification(input_command, mode = 'wod'):
                 return number_of_dice, 6, 0, None, None, None, 'simple', None
             if mode == 'sr':
                 return number_of_dice, 6, None, None, 5, 1, 'sr', None
-                # n, d, mod, ex, succ, glitch_value, mode, command msg
-
+                
         elif roll_match.group('dice_type'):
             dice_type = int(roll_match.group('dice_type'))
             if dice_type == 0:
@@ -156,11 +158,42 @@ def dice_input_verification(input_command, mode = 'wod'):
             cmd_msg = 'Default mode (!r n) set to simple (nd6)'
             return None, None, None, None, None, None, 'simple', cmd_msg
         if option_match.group('mode') == 'sr':
-            cmd_msg = 'Default mode (!r n) set to Shadorun (SR)'
+            cmd_msg = 'Default mode (!r n) set to Shadowrun (SR)'
             return None, None, None, None, None, None, 'sr', cmd_msg
         if option_match.group('status'):
             cmd_msg = 'Default mode is currently {}.'.format(dcfg.mode)
             return None, None, None, None, None, None, mode, cmd_msg
+
+    elif initiative_match:
+        if initiative_match.group('init'):
+            if not (initiative_match.group('name') and initiative_match.group('init_value')):
+                raise dexc.InitiativeError
+            else:
+                dcfg.initiatives[initiative_match.group('name')] = int(initiative_match.group('init_value'))
+                cmd_msg = 'Saved...'
+                return None, None, None, None, None, None, mode, cmd_msg
+
+        if initiative_match.group('next'):
+            if len(dcfg.initiatives.keys()) == 0:
+                raise dexc.EmptyInitiativeListError
+            else:
+                for key in dcfg.initiatives.keys():
+                    init_roll = DiceRoll(dcfg.initiatives[key], 6, None, None, 5, 1)
+                    init_roll.roll_dice()
+                    init_roll.glitch_counter()
+                    init_roll.success_counter()
+                    if init_roll.glitches >= math.ceil(init_roll.number_of_dice/2) and init_roll.successes == 0:
+                        glitch_msg = 'Critical glitch! (╯°□°）╯︵ ┻━┻'
+                    elif init_roll.glitches >= math.ceil(init_roll.number_of_dice/2) and init_roll.successes > 0:
+                        glitch_msg = 'Glitch...'
+                    else:
+                        glitch_msg = ''
+                    dcfg.init_results[key] = [init_roll.successes + dcfg.initiatives[key], glitch_msg]
+                cmd_msg = ''
+                for item in sorted(dcfg.init_results.items(), key = lambda x: x[1], reverse = True):
+                    cmd_msg += '{1:>2} {0} {2}\n'.format(item[0], item[1][0], item[1][1]) 
+                return None, None, None, None, None, None, mode, cmd_msg
+
     else:
         raise dexc.RollInputError
 
@@ -178,7 +211,8 @@ def main():
 
             except (dexc.SuccessConditionError, dexc.ExplodingDiceError, dexc.DiceTypeError,
                     dexc.ExplodingDiceTooSmallError, dexc.GlitchValueError,
-                    dexc.RollInputError, dexc.NoSuccessForGlitchError) as ex:
+                    dexc.RollInputError, dexc.NoSuccessForGlitchError,
+                    dexc.InitiativeError, dexc.EmptyInitiativeListError) as ex:
                 print(dexc.dice_exception_msg(ex, ex.msg))
                 will_roll = False
 

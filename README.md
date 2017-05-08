@@ -1,6 +1,6 @@
 # dicey9000
 
-*v2.2*
+*v2.3*
 
 dicey9000 is a bot for discord that makes dice rolls.
 It takes commands from users messages starting with `!r`
@@ -72,6 +72,27 @@ An arbitrary roll can be made with the following syntax:
       increases by one if the die rolls a '1'.
   * x(explode_value), +(roll_modifier), ?(success_condition) and g(glitch_value)
     are optional entries. g and glitch_value require a success condition.
+
+#### Initiative manager for Shadowrun 4e
+
+Activate the initiative manager by typing
+
+  `!r init (name) (initiative_value)`
+
+A character with initiative attribute equal to initiative_value rolls
+(initiative_value)d6 + (initiative_value).
+
+  * The character name and initiative_value will be recorded.
+  * More characters can be recorded with repeated use of the above command.
+  * The initiative_value for a character can be updated with the above
+    command by repeating the name and changing the initiative_value.
+
+Roll the initiative for all the recorded characters by typing
+
+  `!r next`
+
+The initiative results will be shown from the highest to the lowest, with
+possible glitches and critical glitches also displayed.
 
 #### Help
 
