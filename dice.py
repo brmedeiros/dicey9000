@@ -192,6 +192,7 @@ def dice_input_verification(input_command, mode = 'wod'):
                 cmd_msg = ''
                 for item in sorted(dcfg.init_results.items(), key = lambda x: x[1], reverse = True):
                     cmd_msg += '{1:>2} {0} {2}\n'.format(item[0], item[1][0], item[1][1]) 
+                cmd_msg = '```{}```'.format(cmd_msg)
                 return None, None, None, None, None, None, mode, cmd_msg
 
     else:
