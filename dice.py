@@ -112,7 +112,7 @@ def dice_input_verification(input_command, mode = 'wod'):
                 return number_of_dice, 6, 0, None, None, None, 'simple', None
             if mode == 'sr':
                 return number_of_dice, 6, None, None, 5, 1, 'sr', None
-                
+
         elif roll_match.group('dice_type'):
             dice_type = int(roll_match.group('dice_type'))
             if dice_type == 0:
@@ -194,7 +194,7 @@ def dice_input_verification(input_command, mode = 'wod'):
                     cmd_msg += '{1:>2} {0} {2}\n'.format(item[0], item[1][0], item[1][1]) 
                 cmd_msg = '```{}```'.format(cmd_msg)
                 return None, None, None, None, None, None, mode, cmd_msg
-        
+
         if initiative_match.group('clear'):
             if initiative_match.group('clear_name'):
                 try:
@@ -209,7 +209,7 @@ def dice_input_verification(input_command, mode = 'wod'):
                 dcfg.init_results.clear()
                 cmd_msg = 'Initiative list cleared'
                 return None, None, None, None, None, None, mode, cmd_msg
-            
+
     else:
         raise dexc.RollInputError
 
