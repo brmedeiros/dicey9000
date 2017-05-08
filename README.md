@@ -1,6 +1,6 @@
 # dicey9000
 
-*v2.3*
+*v2.4*
 
 dicey9000 is a bot for discord that makes dice rolls.
 It takes commands from users messages starting with `!r`
@@ -93,6 +93,14 @@ Roll the initiative for all the recorded characters by typing
 
 The initiative results will be shown from the highest to the lowest, with
 possible glitches and critical glitches also displayed.
+
+Remove a character from the initiative list by typing
+
+  `!r clear (name)`
+
+Remove all characters from the initiative list by typing
+
+  `!r clear`
 
 #### Help
 
