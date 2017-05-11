@@ -45,5 +45,6 @@ class EmptyInitiativeListError(Exception):
 
 def dice_exception_msg(exception, exception_msg):
     '''returns the exception message'''
-    msg_string = 'An exception of type {0} occurred.\n------\n{1}'.format(type(exception).__name__, exception_msg)
+    msg_string = 'I\'m sorry Dave, I\'m afraid I can\'t do that.\n***\n{1}'.format(type(exception).__name__, exception_msg)
+    #msg_string = 'An exception of type {0} occurred.\n------\n{1}'.format(type(exception).__name__, exception_msg)
     return msg_string
