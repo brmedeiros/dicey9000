@@ -93,7 +93,7 @@ def dice_input_verification(input_command, mode = 'wod'):
     '''
     roll_match = re.match(r'!r (?P<number_of_dice>\d+)(d(?P<dice_type>\d+))?'
                           r'((?P<total>\+)(?P<add_mod>\d+)?|(-(?P<sub_mod>\d+)))?'
-                          r'(x(?P<explode_value>\d+))?(\?(?P<success_condition>\d+))?'
+                          r'((?P<explode>x)(?P<explode_value>\d+)?)?(\?(?P<success_condition>\d+))?'
                           r'((?P<glitch>g)(?P<glitch_value>\d+)?)?$', input_command)
 
     option_match = re.match(r'!r ((?P<help>help)|(set (?P<mode>wod|simple|sr))|(?P<status>status))$', input_command)
@@ -109,9 +109,15 @@ def dice_input_verification(input_command, mode = 'wod'):
             if mode == 'wod':
                 return number_of_dice, 10, None, 10, 8, None, 'wod', None
             if mode == 'simple':
-                return number_of_dice, 6, 0, None, None, None, 'simple', None
+                if roll_match.group('explode'):
+                    return number_of_dice, 6, 0, 6, None, None, 'simple', None
+                else:
+                    return number_of_dice, 6, 0, None, None, None, 'simple', None
             if mode == 'sr':
-                return number_of_dice, 6, None, None, 5, 1, 'sr', None
+                if roll_match.group('explode'):
+                    return number_of_dice, 6, None, 6, 5, 1, 'sr', None
+                else:
+                    return number_of_dice, 6, None, None, 5, 1, 'sr', None
 
         elif roll_match.group('dice_type'):
             dice_type = int(roll_match.group('dice_type'))
@@ -128,6 +134,10 @@ def dice_input_verification(input_command, mode = 'wod'):
                 if explode_value > dice_type:
                     raise dexc.ExplodingDiceError
                 elif explode_value < 3:
+                    raise dexc.ExplodingDiceTooSmallError
+            elif roll_match.group('explode'):
+                explode_value = int(roll_match.group('dice_type'))
+                if explode_value < 3:
                     raise dexc.ExplodingDiceTooSmallError
             if roll_match.group('success_condition'):
                 success_condition = int(roll_match.group('success_condition'))
