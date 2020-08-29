@@ -14,24 +14,26 @@ def main():
 
     client = discord.Client()
 
-    @client.async_event # equivalent to @client.event\n@asyncio.courotine
-    def on_ready():
+    @client.event # equivalent to @client.event\n@asyncio.courotine
+    async def on_ready():
         '''
         this function represents the event 'being ready'...
         it should not be called anywhere and it is defined in the discord module
         '''
         print('DICEY9000 v.2.5\n------\nLogged in as {0}, id: {1}'.format(client.user, client.user.id))
         auxf.sp_print('Server(s) joined:')
-        for server in client.servers:
+        for server in client.private_channels:
             auxf.sp_print('{0}'.format(server))
         print('\n------')
 
-    @client.async_event
-    def on_message(message):
+    @client.event
+    async def on_message(message):
         '''
         this function represents a 'message event' in any of the channels...
         it should not be called anywhere and it is defined in the discord module
         '''
+        channel = message.channel
+        
         if message.author == client.user:
             print('{:%d/%m/%y %H:%M} @{} {}: {}'
                   .format(dt.datetime.now(), message.channel, message.author.name, message.content))
@@ -39,20 +41,21 @@ def main():
         if message.content.startswith('!r'):
             print('{:%d/%m/%y %H:%M} @{} user: {}'
                   .format(dt.datetime.now(), message.channel, message.content))
+            
             try:
                 will_roll = True
                 number_of_dice, dice_type, modifier, explode, success, glitch, dcfg.mode, cmd_msg\
                 = dice.dice_input_verification(message.content, dcfg.mode)
 
                 if cmd_msg != None:
-                    yield from client.send_message(message.channel, cmd_msg)
+                    await channel.send(cmd_msg)
                     will_roll = False
 
             except (dexc.SuccessConditionError, dexc.ExplodingDiceError, dexc.DiceTypeError,
                     dexc.ExplodingDiceTooSmallError, dexc.GlitchValueError,
                     dexc.RollInputError, dexc.NoSuccessForGlitchError,
                     dexc.InitiativeError, dexc.EmptyInitiativeListError) as ex:
-                yield from client.send_message(message.channel, dexc.dice_exception_msg(ex, ex.msg))
+                await channel.send(dexc.dice_exception_msg(ex, ex.msg))
                 will_roll = False
 
             if will_roll == True:
@@ -61,7 +64,7 @@ def main():
                 my_roll.glitch_counter()
                 my_roll.explode_dice()
                 my_roll.success_counter()
-                yield from client.send_message(message.channel, my_roll.output())
+                await channel.send(my_roll.output())
 
     token = os.environ['DICEY9000_TOKEN']
     client.run(token)
